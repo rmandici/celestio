@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --backdrop: linear-gradient(
+    180deg,
+    rgba(106, 15, 82, 0.9) 0%,
+    rgba(11, 29, 42, 0.95) 45%,
+    rgba(11, 29, 42, 1) 100%
+  );
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 2px 22px rgba(246, 192, 84, 0.35);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center px-6 py-3 rounded-full bg-festival-glow text-black font-semibold hover:shadow-glow transition;
+  }
+
+  .dot-left::before {
+    content: "";
+    position: absolute;
+    top: 15%;
+    transform: translateY(-50%);
+    right: -37px;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: theme("colors.festival.glow"); /* <— ghilimele! */
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 0.08);
+  }
+
+  .dot-right::before {
+    content: "";
+    position: absolute;
+    top: 15%;
+    transform: translateY(-50%);
+    left: -37px;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background: theme("colors.festival.glow"); /* <— ghilimele! */
+    box-shadow: 0 0 0 6px rgb(255 255 255 / 0.08);
+  }
+  .full-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+  }
+}
+/* Fundal global sub tot conținutul */
+html,
+body {
+  height: 100%;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none; /* să nu blocheze click-urile */
+  z-index: -2; /* sub tot */
+}
+
+/* imaginea full-bleed */
+body::before {
+  background: url("./assets/poster.jpg") center / cover no-repeat;
+  /* dacă vrei să fie „lipită” de viewport (parallax subtil) */
+  background-attachment: fixed; /* opțional */
+}
+
+/* overlay/gradient peste imagine (dar sub conținut) */
+body::after {
+  z-index: -1; /* deasupra imaginii, tot sub conținut */
+  background: linear-gradient(
+    180deg,
+    rgba(106, 15, 82, 0.9) 0%,
+    rgba(11, 29, 42, 0.95) 45%,
+    rgba(11, 29, 42, 1) 100%
+  );
+}
