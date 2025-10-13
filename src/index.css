@@ -11,6 +11,10 @@
   );
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 @layer utilities {
   .text-glow {
     text-shadow: 0 2px 22px rgba(246, 192, 84, 0.35);
@@ -18,6 +22,16 @@
 
   .btn-primary {
     @apply inline-flex items-center px-6 py-3 rounded-full bg-festival-glow text-black font-semibold hover:shadow-glow transition;
+  }
+
+  /* Fallback: 100vh; Upgrade automat: 100svh unde e suportat */
+  .min-h-viewport {
+    min-height: 90vh;
+  }
+  @supports (height: 90svh) {
+    .min-h-viewport {
+      min-height: 90svh;
+    }
   }
 
   .dot-left::before {

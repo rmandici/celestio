@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
 const links = [
-  { href: "#news", label: "News" },
-  { href: "#lineup", label: "Line Up" },
+  { href: "#about", label: "Despre" },
+  { href: "#lineup", label: "LineUp" },
   { href: "#tickets", label: "Tickets" },
   { href: "#info", label: "Info" },
 ];
@@ -21,10 +21,11 @@ export default function Navbar() {
   const close = () => setOpen(false);
 
   return (
-    <header className="sticky top-0 z-20 backdrop-blur bg-black/10">
+    <header className="sticky top-0 z-30 backdrop-blur bg-black/10">
       <nav className="relative mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
-        <a href="#" className="font-display text-xl tracking-wide">
+        <a href="#" className="font-display text-xl tracking-wide text-center">
           CELESTIO
+          <div>Christmas Edition 2025 prezinta: Joezy</div>
         </a>
 
         {/* Desktop nav */}
