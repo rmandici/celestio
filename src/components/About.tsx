@@ -59,6 +59,8 @@ const About = () => {
       <div className="mt-10 relative rounded-2xl overflow-hidden ring-1 ring-white/10">
         <img
           src={aboutImg}
+          loading="lazy"
+          decoding="async"
           alt="Atmosferă Celestio Festival"
           className="w-full h-[42vh] sm:h-[50vh] md:h-[60vh] object-cover object-center"
         />

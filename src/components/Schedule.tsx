@@ -5,7 +5,7 @@ import volt from "../assets/volt.png";
 export default function Schedule() {
   return (
     <section
-      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-10 min-h-viewport"
+      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-20 min-h-viewport"
       id="lineup"
     >
       {/* Text */}
@@ -45,23 +45,27 @@ export default function Schedule() {
       <div className="mt-10">
         <ul className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12">
           {/* stânga: Lepah (mai mică) */}
-          <li className="shrink-0">
-            <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shadow-black/40 hover:scale-105 transition">
+          <li className="shrink-0 ">
+            <div className=" w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shadow-black/40 hover:scale-105 transition">
               <img
                 src={lepah}
                 alt="Christian Lepah"
-                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover object-[50%_30%]"
               />
             </div>
           </li>
 
           {/* centru: Joezy (mare) */}
-          <li className="shrink-0">
+          <li className="shrink-0 ">
             <div className="w-44 h-44 sm:w-60 sm:h-60 md:w-80 md:h-80 rounded-full overflow-hidden ring-2 ring-white/15 shadow-2xl shadow-black/50 hover:scale-105 transition">
               <img
                 src={joezy}
                 alt="Joezy"
-                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover object-[50%_25%]"
               />
             </div>
           </li>
@@ -72,6 +76,8 @@ export default function Schedule() {
               <img
                 src={volt}
                 alt="Volt"
+                loading="lazy"
+                decoding="async"
                 className="w-full h-full object-cover"
               />
             </div>

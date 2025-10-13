@@ -12,7 +12,7 @@ function getTimeLeft(target: Date): TimeLeft {
 }
 
 export default function Countdown({ className = "" }: { className?: string }) {
-  const target = useMemo(() => new Date(2025, 11, 25, 21, 0, 0), []);
+  const target = useMemo(() => new Date(2025, 11, 25, 19, 0, 0), []);
   const [t, setT] = useState<TimeLeft>(() => getTimeLeft(target));
 
   useEffect(() => {
