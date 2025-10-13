@@ -5,7 +5,7 @@ import volt from "../assets/volt.png";
 export default function Schedule() {
   return (
     <section
-      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-10"
+      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-10 min-h-viewport"
       id="lineup"
     >
       {/* Text */}
@@ -78,14 +78,17 @@ export default function Schedule() {
           </li>
         </ul>
       </div>
-      <div className="mt-8 md:mt-16 flex justify-center" id="tickets">
-        <a
-          className="btn-primary"
-          href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
-          target="_blank"
-        >
-          Bilete disponibile acum
-        </a>
+      <div className="mt-8 md:mt-16 grid text-center" id="tickets">
+        <div>
+          <a
+            className="btn-primary "
+            href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
+            target="_blank"
+          >
+            Bilete disponibile acum
+          </a>
+        </div>
+        <div className="text-xs mt-2">*Bilete sunt în număr limitat!</div>
       </div>
     </section>
   );

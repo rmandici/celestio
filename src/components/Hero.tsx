@@ -14,7 +14,7 @@ export default function Hero() {
         <p className="mt-3 text-xs uppercase tracking-[0.35em] text-festival-glow">
           25 Decembrie 2025
         </p>
-        <div className="mt-8" id="tickets">
+        <div className="mt-8">
           <a
             className="btn-primary"
             href="https://www.livetickets.ro/bilete/celestio-christmass-edition"

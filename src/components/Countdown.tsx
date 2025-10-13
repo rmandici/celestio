@@ -23,12 +23,16 @@ export default function Countdown({ className = "" }: { className?: string }) {
   const Unit = ({ value, label }: { value: number; label: string }) => (
     <div className="flex flex-col items-center">
       <div
-        className="leading-none font-semibold text-3xl sm:text-4xl md:text-5xl"
+        className="
+        leading-none font-semibold tabular-nums
+        text-3xl sm:text-4xl md:text-5xl
+        w-[3.2rem] sm:w-[3.6rem] md:w-[4.2rem] text-center
+      "
         style={{ fontFamily: "Georgia, Times, 'Times New Roman', serif" }}
       >
         {String(value).padStart(2, "0")}
       </div>
-      <div className="mt-1 text-[10px] sm:text-[11px] uppercase tracking-widest opacity-80">
+      <div className="mt-1 text-[11px] uppercase tracking-widest opacity-80">
         {label}
       </div>
     </div>
