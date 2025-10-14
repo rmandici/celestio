@@ -1,12 +1,13 @@
-import joezy from "../assets/1.png";
+import joezi from "../assets/1.png";
 import lepah from "../assets/2.png";
 import volt from "../assets/3.png";
 import CubeAnimation from "./CubeAnimation";
+import ArtistCard from "./ArtistCard";
 
 export default function Schedule() {
   return (
     <section
-      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-20 min-h-viewport"
+      className="scroll-mt-16 md:scroll-mt-16 mx-auto max-w-5xl px-4 py-20 min-h-viewport overflow-visible"
       id="lineup"
     >
       {/* Text */}
@@ -43,40 +44,34 @@ export default function Schedule() {
       </div>
 
       {/* Strip de imagini side-by-side */}
-      <div className="mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
-            <img
-              src={lepah}
-              alt="Christian Lepah"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+      <div className="-mt-[98px] relative z-0 overflow-visible pb-44 sm:pb-80 md:pb-[300px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-4">
+          <ArtistCard
+            src={lepah}
+            alt="Christian Lepah"
+            title="Christian Lepah"
+            text="Christian Lepah, cu o carieră de peste 24 de ani, unul dintre cei mai apreciați DJ și producători ai scenei deep melodic internaționale, aduce un sunet rafinat, plin de emoție, ce creează conexiunea autentică cu publicul."
+            className="h-72 sm:h-80 md:h-[420px]"
+          />
 
-          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
-            <img
-              src={joezy}
-              alt="Joezy"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+          <ArtistCard
+            src={joezi}
+            alt="Joezi"
+            title="Joezi"
+            text="Joezi, artistul francez care a revoluționat scena Afro House, aduce un sound hipnotic ce combină Afro Beats și Electro Melodic, creând o experiență senzorială intensă. Cu peste 60 de piese lansate pe labeluri internaționale și un vibe unic, Joezi transformă fiecare set într-o călătorie sonoră ce depășește granițele muzicii electronice."
+            className="h-72 sm:h-80 md:h-[420px]"
+          />
 
-          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
-            <img
-              src={volt}
-              alt="Volt"
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+          <ArtistCard
+            src={volt}
+            alt="Volt"
+            title="Volt"
+            text="Descriere demo pentru Volt. Înlocuiește cu textul final când îl ai."
+            className="h-72 sm:h-80 md:h-[420px] mb-10"
+          />
         </div>
       </div>
-      <div className="mt-8 md:mt-16 grid text-center" id="tickets">
+      <div className="mt-8 md:mt-2 grid text-center" id="tickets">
         <div>
           <a
             className="btn-primary "
@@ -89,7 +84,7 @@ export default function Schedule() {
         <div className="text-xs mt-2">*Bilete sunt în număr limitat!</div>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-8 md:mt-12">
         <CubeAnimation />
       </div>
     </section>

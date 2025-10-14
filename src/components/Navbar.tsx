@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import celestioLogo from "../assets/celestio_logo.png";
 
 const links = [
   { href: "#about", label: "Despre" },
@@ -24,8 +25,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-30 backdrop-blur bg-black/10">
       <nav className="relative mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
         <a href="#" className="font-display text-xl tracking-wide text-center">
-          CELESTIO
-          <div>Christmas Edition 2025 prezinta: Joezy</div>
+          <div>
+            <div>Celestio</div>
+            Christmas Edition 2025 prezinta: Joezy
+          </div>
         </a>
 
         {/* Desktop nav */}
