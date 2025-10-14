@@ -100,3 +100,109 @@ body::after {
     rgba(11, 29, 42, 1) 100%
   );
 }
+
+/* ===== Cube Animation (scoped) ===== */
+@keyframes cube-hue {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+/* un wrapper ca să nu afectăm restul layout-ului */
+.cube-stage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* poți șterge min-height dacă îl pui într-o secțiune deja înaltă */
+  min-height: 320px;
+}
+
+/* containerul cu animația */
+.cube-container {
+  position: relative;
+  transform: skewY(-20deg);
+  animation: cube-hue 5s linear infinite;
+  /* ajustare fină de poziție, ca în exemplu */
+  top: -20px;
+}
+
+/* un "cube" (stack) */
+.cube-container .cube {
+  position: relative;
+  z-index: 2;
+}
+
+/* al doilea stack */
+.cube-container .cube:nth-child(2) {
+  z-index: 1;
+  translate: -60px -60px; /* modern CSS */
+}
+
+/* al treilea stack */
+.cube-container .cube:nth-child(3) {
+  z-index: 3;
+  translate: 60px 60px;
+}
+
+/* fiecare coloană dintr-un stack */
+.cube-container .cube > div {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  /* poziționare pe grilă folosind variabilele --x/--y */
+  translate: calc(-70px * var(--x)) calc(-60px * var(--y));
+}
+
+/* cubul propriu-zis */
+.cube-container .cube > div > span {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  background: #111;
+  z-index: calc(1 * var(--i));
+  transition: 1.5s;
+}
+
+/* muchia stângă */
+.cube-container .cube > div > span::before {
+  content: "";
+  position: absolute;
+  left: -40px;
+  width: 40px;
+  height: 100%;
+  background: #0a0a0a;
+  transform-origin: right;
+  transform: skewY(45deg);
+  transition: 1.5s;
+}
+
+/* muchia de sus */
+.cube-container .cube > div > span::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background: #1a1a1a;
+  transform-origin: bottom;
+  transform: skewX(45deg);
+  transition: 1.5s;
+}
+
+/* hover glow */
+.cube-container .cube > div > span:hover {
+  transition: 0s;
+  background: #ef4149;
+  filter: drop-shadow(0 0 30px #ef4149);
+}
+.cube-container .cube > div > span:hover::before,
+.cube-container .cube > div > span:hover::after {
+  transition: 0s;
+  background: #ef4149;
+}

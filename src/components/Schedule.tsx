@@ -1,6 +1,7 @@
-import joezy from "../assets/joezy.jpg";
-import lepah from "../assets/lepah.jpg";
-import volt from "../assets/volt.png";
+import joezy from "../assets/1.png";
+import lepah from "../assets/2.png";
+import volt from "../assets/3.png";
+import CubeAnimation from "./CubeAnimation";
 
 export default function Schedule() {
   return (
@@ -41,48 +42,39 @@ export default function Schedule() {
         </div>
       </div>
 
-      {/* Bulele (fără text/caption) */}
+      {/* Strip de imagini side-by-side */}
       <div className="mt-10">
-        <ul className="flex items-center justify-center gap-6 sm:gap-8 md:gap-12">
-          {/* stânga: Lepah (mai mică) */}
-          <li className="shrink-0 ">
-            <div className=" w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shadow-black/40 hover:scale-105 transition">
-              <img
-                src={lepah}
-                alt="Christian Lepah"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover object-[50%_30%]"
-              />
-            </div>
-          </li>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
+            <img
+              src={lepah}
+              alt="Christian Lepah"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
 
-          {/* centru: Joezy (mare) */}
-          <li className="shrink-0 ">
-            <div className="w-44 h-44 sm:w-60 sm:h-60 md:w-80 md:h-80 rounded-full overflow-hidden ring-2 ring-white/15 shadow-2xl shadow-black/50 hover:scale-105 transition">
-              <img
-                src={joezy}
-                alt="Joezy"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover object-[50%_25%]"
-              />
-            </div>
-          </li>
+          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
+            <img
+              src={joezy}
+              alt="Joezy"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
 
-          {/* dreapta: Volt (mai mică) */}
-          <li className="shrink-0">
-            <div className="w-28 h-28 sm:w-36 sm:h-36 md:w-48 md:h-48 rounded-full overflow-hidden ring-2 ring-white/10 shadow-lg shadow-black/40 hover:scale-105 transition">
-              <img
-                src={volt}
-                alt="Volt"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </li>
-        </ul>
+          <figure className="relative h-72 sm:h-80 md:h-[420px] overflow-hidden rounded-xl ring-1 ring-white/10">
+            <img
+              src={volt}
+              alt="Volt"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
+        </div>
       </div>
       <div className="mt-8 md:mt-16 grid text-center" id="tickets">
         <div>
@@ -95,6 +87,10 @@ export default function Schedule() {
           </a>
         </div>
         <div className="text-xs mt-2">*Bilete sunt în număr limitat!</div>
+      </div>
+
+      <div className="mt-12">
+        <CubeAnimation />
       </div>
     </section>
   );
