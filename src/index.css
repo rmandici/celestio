@@ -26,11 +26,11 @@ html {
 
   /* Fallback: 100vh; Upgrade automat: 100svh unde e suportat */
   .min-h-viewport {
-    min-height: 90vh;
+    min-height: 100vh;
   }
-  @supports (height: 90svh) {
+  @supports (height: 100svh) {
     .min-h-viewport {
-      min-height: 90svh;
+      min-height: 100svh;
     }
   }
 
@@ -83,22 +83,47 @@ body::after {
   z-index: -2; /* sub tot */
 }
 
-/* imaginea full-bleed */
 body::before {
   background: url("./assets/poster.jpg") center / cover no-repeat;
-  /* dacă vrei să fie „lipită” de viewport (parallax subtil) */
-  background-attachment: fixed; /* opțional */
+  background-attachment: fixed;
 }
 
-/* overlay/gradient peste imagine (dar sub conținut) */
 body::after {
-  z-index: -1; /* deasupra imaginii, tot sub conținut */
-  background: linear-gradient(
-    180deg,
-    rgba(106, 15, 82, 0.9) 0%,
-    rgba(11, 29, 42, 0.95) 45%,
-    rgba(11, 29, 42, 1) 100%
-  );
+  z-index: -1; /* peste poză, sub conținut */
+  /* 3 straturi: vignetă radială + fade sus/jos + strat negru global */
+  background: radial-gradient(
+      140% 110% at 50% 40%,
+      rgba(0, 0, 0, 0) 32%,
+      rgba(0, 0, 0, 0.8) 62%,
+      rgba(0, 0, 0, 0.95) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.6) 0%,
+      rgba(0, 0, 0, 0) 28%,
+      rgba(0, 0, 0, 0) 68%,
+      rgba(0, 0, 0, 0.7) 100%
+    ),
+    rgba(0, 0, 0, 0.6);
+  background-blend-mode: multiply, normal, normal;
+
+  /* umbre inset puternice pe tot cadrul */
+  box-shadow: inset 0 0 240px 140px rgba(0, 0, 0, 0.95),
+    inset 0 0 60px 30px rgba(0, 0, 0, 0.95);
+}
+
+:root {
+  --scroll-blur: 0px; /* va fi setat din JS */
+}
+
+/* asigură-te că body::after rămâne semi-transparent (tu deja ai rgba<1) */
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  body::after {
+    backdrop-filter: blur(var(--scroll-blur));
+    -webkit-backdrop-filter: blur(var(--scroll-blur));
+  }
 }
 
 /* ===== Cube Animation (scoped) ===== */

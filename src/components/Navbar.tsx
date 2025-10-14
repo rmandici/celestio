@@ -26,8 +26,7 @@ export default function Navbar() {
       <nav className="relative mx-auto max-w-5xl px-4 py-3 flex items-center justify-between">
         <a href="#" className="font-display text-xl tracking-wide text-center">
           <div>
-            <div>Celestio</div>
-            Christmas Edition 2025 prezinta: Joezy
+            Christmas Edition 2025 prezinta <div>Joezi</div>
           </div>
         </a>
 
