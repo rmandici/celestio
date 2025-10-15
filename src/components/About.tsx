@@ -128,7 +128,7 @@ const About = () => {
     if (p !== page) setPage(Math.max(0, Math.min(1, p)));
   };
   return (
-    <section id="about" className="scroll-mt-20 md:scroll-mt-24 mt-10">
+    <section className="mt-20 min-h-viewport">
       {/* ===== Mobile: 2 ecrane, fiecare cu 2 tile-uri ===== */}
       <div className="md:hidden w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] relative">
         {/* BUTOANELE – frați ai scroller-ului, poziționate în wrapperul relativ */}
@@ -201,10 +201,9 @@ const About = () => {
 
       {/* ===== Desktop/tabletă: 4 coloane pe o singură linie, full-width ===== */}
       <div className="hidden md:block overflow-hidden">
-        <div className="w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] relative ">
+        <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
+          {/* GRID IMAGINI – neschimbat, fără pt-8 */}
           <div className="grid grid-cols-4 w-screen gap-3 px-4">
-            {" "}
-            {/* <-- padding lateral */}
             {ITEMS.map((it, i) => (
               <div key={i} className="col-span-1">
                 <AboutTile img={it.img} text={it.text} />

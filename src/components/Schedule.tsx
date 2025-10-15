@@ -20,27 +20,6 @@ export default function Schedule() {
           Celestio Festival aduce două nume care definesc scena electronică
           internațională
         </h2>
-
-        <div className="mt-4 space-y-4 text-white/85 leading-relaxed max-w-3xl md:max-w-none">
-          <p>
-            <strong>Joezy</strong>, artistul francez care a revoluționat scena
-            Afro House, aduce un sound hipnotic ce combină Afro Beats și Electro
-            Melodic, creând o experiență senzorială intensă. Cu peste 60 de
-            piese lansate pe labeluri internaționale și un vibe unic, Joezy
-            transformă fiecare set într-o călătorie sonoră ce depășește
-            granițele muzicii electronice.
-          </p>
-          <p>
-            <strong>Christian Lepah</strong>, cu o carieră de peste 24 de ani,
-            unul dintre cei mai apreciați DJ și producători ai scenei deep
-            melodic internaționale, aduce un sunet rafinat, plin de emoție, ce
-            creează conexiunea autentică cu publicul.{" "}
-            <div className="opacity-80">
-              🎶 Două lumi sonore diferite, unite prin aceeași energie și
-              pasiune.
-            </div>
-          </p>
-        </div>
       </div>
 
       {/* Strip de imagini side-by-side */}
