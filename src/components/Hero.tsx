@@ -119,8 +119,6 @@ export default function Hero() {
           <div
             className="
       mx-auto max-w-6xl text-center
-      md:backdrop-blur-[2px] md:bg-black/20
-      rounded-2xl
       py-2.5 md:py-4
     "
           >

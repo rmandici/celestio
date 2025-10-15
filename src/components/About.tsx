@@ -128,7 +128,7 @@ const About = () => {
     if (p !== page) setPage(Math.max(0, Math.min(1, p)));
   };
   return (
-    <section className="mt-20 min-h-viewport">
+    <section className="py-20">
       {/* ===== Mobile: 2 ecrane, fiecare cu 2 tile-uri ===== */}
       <div className="md:hidden w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] relative">
         {/* BUTOANELE – frați ai scroller-ului, poziționate în wrapperul relativ */}
@@ -177,15 +177,14 @@ const About = () => {
           ref={scrollerRef}
           onScroll={handleScroll}
           className="
-      flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth
-      gap-3 px-3
-      touch-pan-x [overscroll-behavior-x:contain]
-      [-ms-overflow-style:none] [scrollbar-width:none]
-      [scroll-padding-left:12px] [scroll-padding-right:12px]
-    "
+              flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth
+              gap-3 px-3
+              touch-pan-x [overscroll-behavior-x:contain]
+              [-ms-overflow-style:none] [scrollbar-width:none]
+              [scroll-padding-left:12px] [scroll-padding-right:12px]
+            "
           style={{ WebkitOverflowScrolling: "touch" }}
         >
-          <HintSwipe />
           {/* Ecran 1 */}
           <div className="shrink-0 snap-center [scroll-snap-stop:always] w-[calc(100vw-24px)] grid grid-cols-2 gap-3">
             <AboutTile img={ITEMS[0].img} text={ITEMS[0].text} />
@@ -197,6 +196,7 @@ const About = () => {
             <AboutTile img={ITEMS[3].img} text={ITEMS[3].text} />
           </div>
         </div>
+        <HintSwipe />
       </div>
 
       {/* ===== Desktop/tabletă: 4 coloane pe o singură linie, full-width ===== */}
