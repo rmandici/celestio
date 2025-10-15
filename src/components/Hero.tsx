@@ -33,7 +33,7 @@ function useScrollBlur() {
 export default function Hero() {
   useScrollBlur();
   return (
-    <section className="relative min-h-viewport flex items-center -mt-10">
+    <section className="relative min-h-viewport flex items-center">
       <div className="mx-auto max-w-3xl px-4 text-center">
         <a className="inline-flex flex-col items-center gap-1">
           {/* logo + badge la dreapta (md+) */}
@@ -62,7 +62,7 @@ export default function Hero() {
             </span>
           </div>
           <span
-            className="mt-2 inline-flex items-center gap-3
+            className="my-auto inline-flex items-center gap-3
                    text-[11px] sm:text-xs tracking-[0.35em] uppercase text-white/85"
           >
             <i className="block h-px w-10 bg-white/25" />
@@ -71,9 +71,9 @@ export default function Hero() {
           </span>
           <img
             src={joeziLogo}
-            alt="JOEZY"
+            alt="JOEZI"
             className="
-                    mt-2 h-16 sm:h-20 md:h-[90px] object-contain block
+                    mt-auto h-16 sm:h-20 md:h-[90px] object-contain block
                                               /* alb pe fundal închis */
                     [filter:brightness(.95)_invert(1)_sepia(.25)_saturate(180%)_hue-rotate(330deg)_brightness(1.05)_contrast(.98)]  /* auriu cald pe md+ */
                   "
@@ -83,13 +83,13 @@ export default function Hero() {
             decoding="async"
           />
         </a>
-        <p className="text-3xl uppercase  text-white/70 mt-8">
+        <p className="text-xl md:text-3xl uppercase  text-white/70 my-auto pt-5">
           Singurul festival de Afro House din Romania de Crăciun!{" "}
         </p>
-        <p className="mt-3 text-xs uppercase tracking-[0.35em] text-festival-glow">
+        <p className="pt-2 my-auto text-xs uppercase tracking-[0.35em] text-festival-glow">
           25 Decembrie 2025
         </p>
-        <div className="pt-10">
+        <div className="my-auto pt-4">
           <a
             className="btn-primary"
             href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
@@ -99,27 +99,39 @@ export default function Hero() {
           </a>
         </div>
         {/* Countdown - desktop */}
-        <div className="pt-20 pb-20 flex justify-center">
-          <Countdown />
+        <div className="my-auto pt-8">
+          <div className="relative mx-auto max-w-4xl">
+            {/* wrapperul ăsta dă înălțimea “reală” */}
+            <div className="min-h-[56px] sm:min-h-[110px] md:min-h-[128px] flex items-center justify-center">
+              <Countdown />
+            </div>
+          </div>
         </div>
-        {/* Slogan jos, peste poster */}
-        <div className="pointer-events-none absolute inset-x-5 -bottom-7 z-20">
+        {/* SLOGAN (mobil: static în flux; md+: absolut jos peste poster) */}
+        <div
+          className="
+    mt-4 px-2               /* mobil: intră normal în flux, puțin spațiu sus */
+    md:mt-0 md:px-0         /* md+: reset */
+    md:pointer-events-none
+    
+  "
+        >
           <div
             className="
-    mx-auto max-w-6xl text-center
-    md:backdrop-blur-[2px] md:bg-black/20
-    rounded-2xl
-    py-3 md:py-4
-  "
+      mx-auto max-w-6xl text-center
+      md:backdrop-blur-[2px] md:bg-black/20
+      rounded-2xl
+      py-2.5 md:py-4
+    "
           >
-            {/* linia 1 (două propoziții) */}
+            {/* linia 1 */}
             <p
               className="
-      font-display text-glow text-transparent bg-clip-text
-      bg-gradient-to-r from-[#FFD66E] to-[#FF9A3C]
-      text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold tracking-wide
-      leading-tight
-    "
+        font-display text-glow text-transparent bg-clip-text
+        bg-gradient-to-r from-[#FFD66E] to-[#FF9A3C]
+        text-lg sm:text-xl md:text-3xl lg:text-4xl font-semibold tracking-wide
+        leading-snug md:leading-tight
+      "
             >
               <span className="block md:inline">RITMURI TRIBALE.</span>
               <span className="block md:inline md:mx-3">ENERGIE PURĂ.</span>
@@ -128,11 +140,11 @@ export default function Hero() {
             {/* linia 2 */}
             <p
               className="
-      mt-1 md:mt-2
-      font-display text-glow text-transparent bg-clip-text
-      bg-gradient-to-r from-[#FFD66E] to-[#FF9A3C]
-      text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold tracking-wide
-    "
+        mt-0.5 md:mt-2
+        font-display text-glow text-transparent bg-clip-text
+        bg-gradient-to-r from-[#FFD66E] to-[#FF9A3C]
+        text-lg sm:text-xl md:text-3xl lg:text-4xl font-semibold tracking-wide
+      "
             >
               JOEZY VINE LA CELESTIO
             </p>

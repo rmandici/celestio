@@ -112,6 +112,18 @@ body::after {
     inset 0 0 60px 30px rgba(0, 0, 0, 0.95);
 }
 
+/* pe mobil – mai puțin agresiv */
+@media (max-width: 768px) {
+  body::after {
+    background: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0) 50%,
+      rgba(0, 0, 0, 0.8) 82%,
+      rgba(0, 0, 0, 0.95) 100%
+    );
+  }
+}
+
 :root {
   --scroll-blur: 0px; /* va fi setat din JS */
 }
