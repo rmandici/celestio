@@ -88,6 +88,22 @@ body::before {
   background-attachment: fixed;
 }
 
+/* iOS Safari fix – dezactivează attachment:fixed și mută ușor focusul */
+@supports (-webkit-touch-callout: none) {
+  body::before {
+    background-attachment: scroll !important;
+    background-position: center 30% !important; /* ajustează 20–40% după gust */
+  }
+}
+
+/* Fallback general pe ecrane mici */
+@media (max-width: 768px) {
+  body::before {
+    background-attachment: scroll;
+    background-position: center 30%;
+  }
+}
+
 body::after {
   z-index: -1; /* peste poză, sub conținut */
   /* 3 straturi: vignetă radială + fade sus/jos + strat negru global */
