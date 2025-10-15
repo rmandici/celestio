@@ -91,7 +91,7 @@ export default function Schedule() {
   return (
     <section
       className="
-        mx-auto max-w-5xl px-4
+        max-w-7xl px-4 mx-auto
         pt-20 md:pt-20 pb-16
         overflow-visible
         
@@ -99,14 +99,21 @@ export default function Schedule() {
     >
       {/* Text */}
       <div className="text-center md:text-left">
-        <p className="text-xs uppercase tracking-[0.35em] text-white/60">
+        <div className="text-xs uppercase tracking-[0.35em] text-white/60 md:inline-block md:align-baseline">
           Line-Up Announcement
-        </p>
-
-        <h2 className="mt-2 font-display text-3xl sm:text-4xl font-bold text-white">
-          Celestio Festival aduce două nume care definesc scena electronică
-          internațională
-        </h2>
+        </div>
+        <div>
+          <h2
+            className="
+      mt-2 md:mt-0
+      md:inline md:mx-auto md:text-center md:align-baseline 
+      font-display text-3xl sm:text-4xl font-bold text-white
+    "
+          >
+            Celestio Festival aduce două nume care definesc scena electronică
+            internațională
+          </h2>
+        </div>
       </div>
 
       {/* ======= Mobil (md:hidden): tap + blur + text ======= */}
@@ -134,7 +141,7 @@ export default function Schedule() {
       </div>
 
       {/* ======= Desktop (md+): componenta ta originală cu hover ======= */}
-      <div className="hidden md:block -mt-[98px] relative z-0 overflow-visible pb-44 sm:pb-80 md:pb-[300px]">
+      <div className="hidden md:block -mt-[150px] relative z-0 overflow-visible pb-44 sm:pb-80 md:pb-[300px]">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-4">
           <ArtistCard
             src={lepah}
@@ -155,7 +162,7 @@ export default function Schedule() {
             alt="Volt"
             title="Volt"
             text="Descriere demo pentru Volt. Înlocuiește cu textul final când îl ai."
-            className="h-72 sm:h-80 md:h-[420px] mb-10"
+            className="h-72 sm:h-80 md:h-[420px]"
           />
         </div>
       </div>
