@@ -4,6 +4,7 @@ import Schedule from "./components/Schedule";
 import Footer from "./components/Footer";
 import About from "./components/About";
 import JoeziSection from "./components/JoeziSection";
+import FaqSection from "./components/FaqSection";
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
       <JoeziSection />
       <About />
       <Schedule />
+      <FaqSection />
       <Footer />
     </div>
   );

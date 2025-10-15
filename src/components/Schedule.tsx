@@ -178,7 +178,7 @@ export default function Schedule() {
             Bilete disponibile acum
           </a>
         </div>
-        <div className="text-xs mt-2">*Bilete sunt în număr limitat!</div>
+        <div className="text-xs mt-2">*Biletele sunt în număr limitat!</div>
       </div>
 
       {/* Decor / animație */}
