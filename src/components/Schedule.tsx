@@ -113,6 +113,9 @@ export default function Schedule() {
             Celestio Festival aduce două nume care definesc scena electronică
             internațională
           </h2>
+          <h3 className="text-center md:text-right mt-2 md:mt-0 text-xs sm:text-sm">
+            🎶 Două lumi sonore diferite, unite prin aceeași energie și pasiune
+          </h3>
         </div>
       </div>
 
@@ -175,7 +178,7 @@ export default function Schedule() {
             href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
             target="_blank"
           >
-            Bilete disponibile acum
+            Asigură-ti locul acum!
           </a>
         </div>
         <div className="text-xs mt-2">*Biletele sunt în număr limitat!</div>

@@ -82,7 +82,8 @@ export default function JoeziSection() {
       "
                 >
                   <a
-                    href="#tickets"
+                    href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
+                    target="_blank"
                     className="
           inline-flex items-center
           px-4 py-2 sm:px-6 sm:py-2.5 md:px-8 md:py-3.5

@@ -12,19 +12,19 @@ type Item = { img: string; text: string };
 const ITEMS: Item[] = [
   {
     img: about1,
-    text: "Pe 25 decembrie, JOEZI revine în România pentru un set afro-electronic plin de energie și emoție.",
+    text: "Pe 25 decembrie, JOEZI revine în România și urcă pe scena Celestio Festival pentru un set care promite o explozie de energie, emoție și ritmuri afro-electronice.",
   },
   {
     img: about2,
-    text: "Fuziune spectaculoasă între Afro Beats și Electro Melodic, un sound care a redefinit Afro House.",
+    text: "Artistul francez care a revoluționat scena Afro House, aduce un sound hipnotic ce combină Afro Beats și Electro Melodic, creând o experiență senzorială intensă.",
   },
   {
     img: about3,
-    text: "Peste 60 de piese lansate la labeluri internaționale și un vibe unic ce transformă fiecare set.",
+    text: "Cu peste 60 de piese lansate la unele dintre cele mai importante labeluri internaționale, artistul creează o atmosferă hipnotică, în care fiecare beat devine o conexiune între oameni, dans și spirit.\r\nPregătește-te pentru o noapte în care muzica depășește granițele unui party obișnuit! ",
   },
   {
     img: about4,
-    text: "JOEZI @ Celestio Festival — 25 decembrie | Baia Mare • Sala Polivalentă Lascăr Pană.",
+    text: "JOEZI @ Celestio Festival — 25 DECEMBRIE | BAIA MARE @Sala Polivalentă Lascăr Pană.",
   },
 ];
 
@@ -97,7 +97,7 @@ function AboutTile({ img, text }: Item) {
         ].join(" ")}
         aria-hidden={!open}
       >
-        <p className="max-w-[32ch] md:max-w-[40ch] text-white/95 text-base md:text-lg leading-relaxed">
+        <p className="max-w-[32ch] md:max-w-[40ch] text-white/95 text-base md:text-lg leading-relaxed whitespace-pre-line">
           {text}
         </p>
       </div>

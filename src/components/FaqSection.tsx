@@ -29,10 +29,6 @@ const FAQS: QA[] = [
           <strong>VIP Tables</strong> – experiență premium cu mese exclusive,
           vizibilitate maximă, consumație minimă – <strong>3.000 RON</strong>.
         </li>
-        <li>
-          <strong>Backstage Exclusive</strong> – acces într-un lounge privat,
-          masă obligatorie, consumație minimă – <strong>10.000 RON</strong>.
-        </li>
       </ul>
     ),
   },
@@ -41,9 +37,8 @@ const FAQS: QA[] = [
     q: "3. CUM REZERV MASA?",
     a: (
       <>
-        După achiziționarea biletului <strong>VIP</strong> sau{" "}
-        <strong>Backstage Exclusive</strong>, suni la numărul{" "}
-        <strong>07XXXXXXX</strong> pentru a rezerva masa dorită.
+        După achiziționarea biletului <strong>VIP</strong>, suni la numărul {""}
+        <strong>075686159</strong> pentru a rezerva masa dorită.
         <p className="mt-3 text-white/70 italic">
           *Rezervările pentru mese se fac doar în baza biletului achiziționat.
         </p>
@@ -57,8 +52,8 @@ const FAQS: QA[] = [
       <>
         Da, dar biletele vor fi în număr limitat și doar{" "}
         <strong>General Access</strong>.<br />
-        Biletele <strong>VIP</strong> sau <strong>Backstage Exclusive</strong>{" "}
-        se pot achiziționa doar online, în limita numărului disponibil.
+        Biletele <strong>VIP</strong> se pot achiziționa doar online, în limita
+        numărului disponibil.
       </>
     ),
   },
