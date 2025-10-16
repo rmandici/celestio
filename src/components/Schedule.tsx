@@ -98,22 +98,16 @@ export default function Schedule() {
       "
     >
       {/* Text */}
-      <div className="text-center md:text-left">
+      <div className="text-center ">
         <div className="text-xs uppercase tracking-[0.35em] text-white/60 md:inline-block md:align-baseline">
           Line-Up Announcement
         </div>
         <div>
-          <h2
-            className="
-      mt-2 md:mt-0
-      md:inline md:mx-auto md:text-center md:align-baseline 
-      font-display text-3xl sm:text-4xl font-bold text-white
-    "
-          >
-            Celestio Festival aduce două nume care definesc scena electronică
-            internațională
-          </h2>
-          <h3 className="text-center md:text-right mt-2 md:mt-0 text-xs sm:text-sm">
+          <h3 className=" mt-2 md:mt-0 md:inline md:mx-auto md:text-center md:align-baseline font-display text-3xl sm:text-4xl font-bold text-white min-[1325px]:whitespace-nowrap">
+            Celestio Festival aduce două nume care definesc scena afro
+            house-ului internațională :
+          </h3>
+          <h3 className="text-center mt-2 text-xs sm:text-sm">
             🎶 Două lumi sonore diferite, unite prin aceeași energie și pasiune
           </h3>
         </div>

@@ -23,11 +23,12 @@ const FAQS: QA[] = [
     a: (
       <ul className="space-y-2">
         <li>
-          <strong>General Access</strong> – acces general, număr limitat.
+          <strong>General Access</strong> – masă standing, fără scaune,
+          consumație minimă de <strong>500 lei</strong>.
         </li>
         <li>
-          <strong>VIP Tables</strong> – experiență premium cu mese exclusive,
-          vizibilitate maximă, consumație minimă – <strong>3.000 RON</strong>.
+          <strong>VIP</strong> – experiență premium cu mese exclusive,
+          vizibilitate maximă, consumație minimă – <strong>3.000 lei</strong>.
         </li>
       </ul>
     ),
@@ -37,8 +38,16 @@ const FAQS: QA[] = [
     q: "3. CUM REZERV MASA?",
     a: (
       <>
-        După achiziționarea biletului <strong>VIP</strong>, suni la numărul {""}
-        <strong>075686159</strong> pentru a rezerva masa dorită.
+        După achiziționarea biletului, suni la numărul {""}
+        <strong>0756861597</strong> pentru a rezerva masa dorită. <br />
+        <br />
+        Tipurile de mese sunt:
+        <br />
+        <br />
+        <strong>General Access</strong> - masă standing, fără scaune, consumație
+        minimă de 500 lei.
+        <br /> <strong>VIP</strong> - masă exclusive cu canapele, consumație
+        minimă de 3000 lei.
         <p className="mt-3 text-white/70 italic">
           *Rezervările pentru mese se fac doar în baza biletului achiziționat.
         </p>
@@ -50,10 +59,8 @@ const FAQS: QA[] = [
     q: "4. POT LUA BILET DE LA INTRARE?",
     a: (
       <>
-        Da, dar biletele vor fi în număr limitat și doar{" "}
-        <strong>General Access</strong>.<br />
-        Biletele <strong>VIP</strong> se pot achiziționa doar online, în limita
-        numărului disponibil.
+        Da, poți achiziționa bilete <strong>General Access</strong> dar și{" "}
+        <strong>VIP</strong>, în limita stocului disponibil.
       </>
     ),
   },
