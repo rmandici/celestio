@@ -1,7 +1,6 @@
 import joezi from "../assets/1.png";
 import lepah from "../assets/2.png";
 import volt from "../assets/3.png";
-import CubeAnimation from "./CubeAnimation";
 import ArtistCard from "./ArtistCard";
 import { useState } from "react";
 import HintTap from "./HintTap";
