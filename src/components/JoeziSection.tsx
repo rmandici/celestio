@@ -13,16 +13,29 @@ export default function JoeziSection() {
             relative h-full overflow-hidden rounded-3xl
             bg-black/45 backdrop-blur
             shadow-[0_25px_120px_rgba(0,0,0,0.75)]
+            md:max-h-[82vh]
           "
         >
           {/* două coloane pe md+, stivuite pe mobil */}
           <div className="grid h-full md:grid-cols-2">
             {/* imagine – ~40vh pe mobil ca să rămânem în 80% total */}
-            <div className="relative h-[40vh] sm:h-[44vh] md:h-auto md:min-h-[70vh]">
+            <div
+              className="relative overflow-hidden
+                backdrop-blur
+                shadow-[0_25px_120px_rgba(0,0,0,0.75)]
+                flex items-center justify-center
+                md:pt-20 pt-5
+              "
+            >
               <img
                 src={joeziImg}
                 alt="Joezi live"
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                className="
+                  block mx-auto
+                  w-auto h-auto object-contain select-none pointer-events-none
+                  max-w-full
+                  max-h-[46vh] sm:max-h-[54vh] md:max-h-[60vh]
+                "
                 loading="lazy"
                 decoding="async"
               />
@@ -39,12 +52,12 @@ export default function JoeziSection() {
                 <h2
                   id="joezi-title"
                   className="
-        mt-2
-        font-display
-        text-2xl sm:text-4xl md:text-6xl
-        leading-snug sm:leading-tight
-        text-white
-      "
+                    mt-2
+                    font-display
+                    text-2xl sm:text-4xl md:text-6xl
+                    leading-snug sm:leading-tight
+                    text-white
+                  "
                 >
                   JOEZI — Afro House redefinit
                 </h2>

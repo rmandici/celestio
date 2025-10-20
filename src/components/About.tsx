@@ -1,31 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import HintTap from "./HintTap";
-// TODO: schimbă cu imaginile tale
+// FĂRĂ HintTap
 import about1 from "../assets/about1.jpg";
 import about2 from "../assets/about2.jpg";
 import about3 from "../assets/about3.jpg";
 import about4 from "../assets/about4.jpg";
 import HintSwipe from "./HintSwipe";
 
-type Item = { img: string; text: string };
+type Item = { img: string };
 
 const ITEMS: Item[] = [
-  {
-    img: about1,
-    text: "Pe 25 decembrie, JOEZI revine în România și urcă pe scena Celestio Festival pentru un set care promite o explozie de energie, emoție și ritmuri afro-electronice.",
-  },
-  {
-    img: about2,
-    text: "Artistul francez care a revoluționat scena Afro House, aduce un sound hipnotic ce combină Afro Beats și Electro Melodic, creând o experiență senzorială intensă.",
-  },
-  {
-    img: about3,
-    text: "Cu peste 60 de piese lansate la unele dintre cele mai importante labeluri internaționale, artistul creează o atmosferă hipnotică, în care fiecare beat devine o conexiune între oameni, dans și spirit.\r\nPregătește-te pentru o noapte în care muzica depășește granițele unui party obișnuit! ",
-  },
-  {
-    img: about4,
-    text: "JOEZI @ Celestio Festival — 25 DECEMBRIE | BAIA MARE @Sala Polivalentă Lascăr Pană.",
-  },
+  { img: about1 },
+  { img: about2 },
+  { img: about3 },
+  { img: about4 },
 ];
 
 /* Hook mic pentru apariție la scroll */
@@ -44,64 +31,39 @@ function useInView<T extends HTMLElement>(opts?: IntersectionObserverInit) {
   return { ref, inView };
 }
 
-function AboutTile({ img, text }: Item) {
+function AboutTile({ img }: Item) {
   const { ref, inView } = useInView<HTMLDivElement>();
-  const [open, setOpen] = useState(false);
 
   return (
     <div
       ref={ref}
       className={[
-        "relative overflow-hidden",
-        "h-[58vh] md:h-[64vh] lg:h-[68vh]", // înălțime panou
+        "group relative overflow-hidden",
+        "h-[58vh] md:h:[64vh] lg:h-[68vh]",
         "rounded-none md:rounded-3xl ring-1 ring-white/10",
         "shadow-[0_25px_120px_rgba(0,0,0,0.75)]",
         "transition-all duration-700 ease-out",
         inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-        "cursor-pointer select-none",
+        // doar cursor normal; nu mai e clickable
+        "select-none",
       ].join(" ")}
-      onClick={() => setOpen((v) => !v)}
-      role="button"
-      aria-pressed={open}
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          setOpen((v) => !v);
-        }
-      }}
     >
       <img
         src={img}
         alt=""
         className={[
           "absolute inset-0 w-full h-full object-cover",
-          "transition-transform duration-700 ease-out",
-          open ? "scale-[1.04]" : "scale-[1.0]",
-          "pointer-events-none",
+          "transition-transform duration-700 ease-out will-change-transform",
+          // zoom fin DOAR pe desktop/tabletă
+          "md:group-hover:scale-[1.04]",
         ].join(" ")}
         draggable={false}
         loading="lazy"
         decoding="async"
       />
+
       {/* vignetă ușoară permanentă */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
-      {/* overlay la click: blur + text */}
-      <div
-        className={[
-          "absolute inset-0 grid place-items-center text-center p-5 sm:p-6",
-          "transition-all duration-500 ease-out",
-          open
-            ? "opacity-100 backdrop-blur-md bg-black/45"
-            : "opacity-0 backdrop-blur-0 bg-transparent",
-        ].join(" ")}
-        aria-hidden={!open}
-      >
-        <p className="max-w-[32ch] md:max-w-[40ch] text-white/95 text-base md:text-lg leading-relaxed whitespace-pre-line">
-          {text}
-        </p>
-      </div>
-      <HintTap hidden={open} />
     </div>
   );
 }
@@ -127,11 +89,12 @@ const About = () => {
     const p = Math.round(el.scrollLeft / w);
     if (p !== page) setPage(Math.max(0, Math.min(1, p)));
   };
+
   return (
     <section className="py-20">
       {/* ===== Mobile: 2 ecrane, fiecare cu 2 tile-uri ===== */}
       <div className="md:hidden w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] relative">
-        {/* BUTOANELE – frați ai scroller-ului, poziționate în wrapperul relativ */}
+        {/* BUTOANELE */}
         <button
           aria-label="Anterior"
           onClick={() => scrollToPage(0)}
@@ -187,26 +150,27 @@ const About = () => {
         >
           {/* Ecran 1 */}
           <div className="shrink-0 snap-center [scroll-snap-stop:always] w-[calc(100vw-24px)] grid grid-cols-2 gap-3">
-            <AboutTile img={ITEMS[0].img} text={ITEMS[0].text} />
-            <AboutTile img={ITEMS[1].img} text={ITEMS[1].text} />
+            <AboutTile img={ITEMS[0].img} />
+            <AboutTile img={ITEMS[1].img} />
           </div>
           {/* Ecran 2 */}
           <div className="shrink-0 snap-center [scroll-snap-stop:always] w-[calc(100vw-24px)] grid grid-cols-2 gap-3">
-            <AboutTile img={ITEMS[2].img} text={ITEMS[2].text} />
-            <AboutTile img={ITEMS[3].img} text={ITEMS[3].text} />
+            <AboutTile img={ITEMS[2].img} />
+            <AboutTile img={ITEMS[3].img} />
           </div>
         </div>
+
+        {/* Dacă nu mai vrei și HintSwipe, poți șterge următoarea linie */}
         <HintSwipe />
       </div>
 
-      {/* ===== Desktop/tabletă: 4 coloane pe o singură linie, full-width ===== */}
+      {/* ===== Desktop/tabletă: 4 coloane pe o singură linie ===== */}
       <div className="hidden md:block overflow-hidden">
         <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-          {/* GRID IMAGINI – neschimbat, fără pt-8 */}
           <div className="grid grid-cols-4 w-screen gap-3 px-4">
             {ITEMS.map((it, i) => (
               <div key={i} className="col-span-1">
-                <AboutTile img={it.img} text={it.text} />
+                <AboutTile img={it.img} />
               </div>
             ))}
           </div>

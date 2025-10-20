@@ -144,7 +144,7 @@ export default function Hero() {
         text-lg sm:text-xl md:text-3xl lg:text-4xl font-semibold tracking-wide
       "
             >
-              JOEZY VINE LA CELESTIO
+              JOEZI VINE LA CELESTIO
             </p>
           </div>
         </div>

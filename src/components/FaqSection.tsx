@@ -21,16 +21,46 @@ const FAQS: QA[] = [
     id: "tipuri-bilete",
     q: "2. CE TIPURI DE BILETE EXISTĂ?",
     a: (
-      <ul className="space-y-2">
-        <li>
-          <strong>General Access</strong> – masă standing, fără scaune,
-          consumație minimă de <strong>500 lei</strong>.
-        </li>
-        <li>
-          <strong>VIP</strong> – experiență premium cu mese exclusive,
-          vizibilitate maximă, consumație minimă – <strong>3.000 lei</strong>.
-        </li>
-      </ul>
+      <>
+        <ul className="space-y-2 mb-3">
+          <li>
+            <strong>General Access</strong>
+          </li>
+          <li>
+            <strong>VIP</strong>
+          </li>
+        </ul>
+
+        <ul className="list-disc pl-5 space-y-1 text-[15px] leading-relaxed text-white/90">
+          <li>
+            Biletele se pot achiziționa de pe{" "}
+            <a
+              href="https://www.livetickets.ro/bilete/celestio-christmass-edition"
+              target="_blank"
+              rel="noreferrer"
+              className="
+              relative inline-block align-middle
+              font-semibold
+              underline decoration-2 underline-offset-4 decoration-festival-glow/60
+              focus:outline-none focus:ring-2 focus:ring-festival-glow/60 rounded-md
+              transition
+            "
+            >
+              <span
+                className="
+                px-1.5 py-0.5 rounded-md
+                bg-festival-glow/15 ring-1 ring-inset ring-festival-glow/40
+                hover:bg-festival-glow hover:text-black
+                transition
+              "
+              >
+                livetickets.ro
+              </span>
+            </a>
+          </li>
+          <li>La ambele categorii de bilete poți rezerva masa.</li>
+        </ul>
+      </>
     ),
   },
   {
@@ -45,9 +75,9 @@ const FAQS: QA[] = [
         <br />
         <br />
         <strong>General Access</strong> - masă standing, fără scaune, consumație
-        minimă de 500 lei.
+        minimă de <strong>500 lei</strong>.
         <br /> <strong>VIP</strong> - masă exclusive cu canapele, consumație
-        minimă de 3000 lei.
+        minimă de <strong>3000 lei</strong>.
         <p className="mt-3 text-white/70 italic">
           *Rezervările pentru mese se fac doar în baza biletului achiziționat.
         </p>

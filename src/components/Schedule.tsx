@@ -131,7 +131,7 @@ export default function Schedule() {
             src={volt}
             alt="Volt"
             title="Volt"
-            text="Descriere demo pentru Volt. Înlocuiește cu textul final când îl ai."
+            text="De la ora 21:00, VOLT deschide seara și dă tonul energiei de festival. Cu un stil vibrant și un sound ce combină deep tech și melodic house, el transformă primele ore ale nopții într-o escaladare de ritmuri, emoție și vibe."
           />
         </div>
       </div>
@@ -157,7 +157,7 @@ export default function Schedule() {
             src={volt}
             alt="Volt"
             title="Volt"
-            text="Descriere demo pentru Volt. Înlocuiește cu textul final când îl ai."
+            text="De la ora 21:00, VOLT deschide seara și dă tonul energiei de festival. Cu un stil vibrant și un sound ce combină deep tech și melodic house, el transformă primele ore ale nopții într-o escaladare de ritmuri, emoție și vibe."
             className="h-72 sm:h-80 md:h-[420px]"
           />
         </div>
