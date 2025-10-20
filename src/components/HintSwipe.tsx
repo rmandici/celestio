@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function HintSwipe() {
   return (
-    <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/80 pointer-events-none">
+    <div className="md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-2 text-white/80 pointer-events-none">
       <motion.span
         initial={{ x: 0, opacity: 0.9 }}
         animate={{ x: [-8, 8, -8], opacity: [1, 0.8, 1] }}

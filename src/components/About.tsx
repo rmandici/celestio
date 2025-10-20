@@ -23,7 +23,7 @@ const ITEMS: Item[] = [
 ];
 
 const GAP_PX = 12;
-const REPEAT = 12;
+const REPEAT = 16; // suficient pt. infinit fără a încărca excesiv mobilul
 
 /* Reveal on scroll – ca înainte */
 function useInView<T extends HTMLElement>(
@@ -47,7 +47,7 @@ function useInView<T extends HTMLElement>(
 }
 
 export default function About() {
-  // 2 pe mobil, 4 pe desktop
+  // 2 pe mobil, 4 pe desktop (layout inițial)
   const [visible, setVisible] = useState(4);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -60,14 +60,14 @@ export default function About() {
   const base = ITEMS.map((i) => i.img);
   const baseLen = base.length;
 
-  // track extins pentru infinit
+  // track extins pentru “infinit”
   const extended = useMemo(() => {
     const arr: string[] = [];
     for (let i = 0; i < REPEAT; i++) arr.push(...base);
     return arr;
   }, [base]);
 
-  // viewport + măsurare card width (folosește lățimea secțiunii, nu padding)
+  // viewport + măsurare card width
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [cardW, setCardW] = useState(0);
   useEffect(() => {
@@ -88,134 +88,61 @@ export default function About() {
     };
   }, [visible]);
 
-  // start la mijlocul track-ului
-  const startIndex = useMemo(() => Math.floor(REPEAT / 2) * baseLen, [baseLen]);
-  const [index, setIndex] = useState(startIndex);
+  // index = slide-ul din stânga ferestrei
+  const calcStartIndex = (vis: number) => {
+    const mid = Math.floor(REPEAT / 2) * baseLen;
+    return mid; // pentru 2/4 vizibile nu offsetăm
+  };
+
+  const [index, setIndex] = useState(() => calcStartIndex(visible));
   const [animate, setAnimate] = useState(true);
 
+  // re-aliniere când se schimbă nr. vizibile
   useEffect(() => {
     setAnimate(false);
-    setIndex(startIndex);
+    setIndex(calcStartIndex(visible));
     requestAnimationFrame(() => setAnimate(true));
-  }, [startIndex]);
+  }, [visible, baseLen]);
 
+  // controale
   const next = () => setIndex((i) => Math.round(i) + 1);
   const prev = () => setIndex((i) => Math.round(i) - 1);
 
-  // ===== Drag fluid pe mobil: fără setState în mișcare =====
-  const trackRef = useRef<HTMLDivElement | null>(null);
-  const drag = useRef({ active: false, startX: 0, startIndex: 0 });
-  const rafId = useRef<number | null>(null);
-  const tempIndexRef = useRef<number>(index);
-  const stepRef = useRef<number>(0);
+  // swipe pe mobil (ca Souperior: doar la end decidem pagina)
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current == null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) {
+      delta < 0 ? next() : prev();
+    }
+    touchStartX.current = null;
+  };
+
+  // infinit: recentrare INVIZIBILĂ, fără salt vizual
   useEffect(() => {
-    stepRef.current = cardW + GAP_PX;
-  }, [cardW]);
-
-  useEffect(() => {
-    const el = viewportRef.current;
-    const track = trackRef.current;
-    if (!el || !track) return;
-
-    const onPointerDown = (e: PointerEvent) => {
-      const target = e.target as HTMLElement;
-      if (target.closest("[data-arrow]")) return;
-      drag.current.active = true;
-      drag.current.startX = e.clientX;
-      drag.current.startIndex = Math.round(index);
-      tempIndexRef.current = drag.current.startIndex;
-      setAnimate(false);
-      el.setPointerCapture(e.pointerId);
-    };
-
-    let lastDx = 0;
-    const paint = () => {
-      const step = stepRef.current || 1;
-      const temp = drag.current.startIndex - lastDx / step;
-      tempIndexRef.current = temp;
-      const x = -(temp * step);
-      track.style.transform = `translate3d(${x}px,0,0)`;
-      rafId.current = null;
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!drag.current.active) return;
-      lastDx = e.clientX - drag.current.startX;
-      if (rafId.current == null) {
-        rafId.current = requestAnimationFrame(paint);
-      }
-    };
-
-    const onPointerUp = (e: PointerEvent) => {
-      if (!drag.current.active) return;
-      el.releasePointerCapture(e.pointerId);
-      drag.current.active = false;
-      const snapped = Math.round(tempIndexRef.current);
-      setIndex(snapped);
-      setAnimate(true);
-      if (rafId.current != null) cancelAnimationFrame(rafId.current);
-      rafId.current = null;
-    };
-
-    el.addEventListener("pointerdown", onPointerDown, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerup", onPointerUp, { passive: true });
-    return () => {
-      el.removeEventListener("pointerdown", onPointerDown);
-      window.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
-      if (rafId.current != null) cancelAnimationFrame(rafId.current);
-      rafId.current = null;
-    };
-  }, [index]);
-
-  // infinit: recentrare invizibilă
-  useEffect(() => {
-    const step = stepRef.current || cardW + GAP_PX;
-    if (!step) return;
-
-    // ținem departe limitele ca să fie rar
     const low = baseLen * 2;
-    const high = baseLen * (REPEAT - 4);
-
+    const high = baseLen * (REPEAT - 3);
     if (index < low || index > high) {
-      const track = trackRef.current;
-      if (!track) return;
-
-      // poziția curentă (în pixeli) înainte de normalizare
-      const prevX = -(index * step);
-
-      // index „normalizat” înapoi spre mijloc
-      const delta = index - startIndex;
-      const normalized = startIndex + (((delta % baseLen) + baseLen) % baseLen);
-
-      // pregătim fără animație
-      track.style.transition = "none";
+      const delta = index - calcStartIndex(visible);
+      const normalized =
+        calcStartIndex(visible) + (((delta % baseLen) + baseLen) % baseLen);
       setAnimate(false);
       setIndex(normalized);
-
-      // păstrăm EXACT aceeași poziție vizuală (modulo perioada)
-      const nextX = -(normalized * step);
-      const period = baseLen * step;
-      const k = Math.round((nextX - prevX) / period);
-      const visualX = nextX - k * period;
-      track.style.transform = `translate3d(${visualX}px,0,0)`;
-
-      // pe următorul frame dăm controlul înapoi lui React + animației
-      requestAnimationFrame(() => {
-        track.style.transition = ""; // lasă CSS-ul existent
-        setAnimate(true);
-      });
+      requestAnimationFrame(() => setAnimate(true));
     }
-  }, [index, baseLen, startIndex, cardW]);
+  }, [index, baseLen, visible]);
 
   // transform & track
   const step = cardW + GAP_PX;
   const translateX = -(index * step);
   const trackW = extended.length * step - GAP_PX;
 
-  // dots pe mobil (grupate 2)
-  const logicalLeft = ((Math.round(index) % baseLen) + baseLen) % baseLen;
+  // dots pe mobil (perechi de 2)
+  const logicalLeft = ((index % baseLen) + baseLen) % baseLen;
   const group = Math.max(1, Math.min(visible, 2));
   const dotsCount = Math.ceil(baseLen / group);
   const activeDot = Math.floor(logicalLeft / group) % dotsCount;
@@ -227,7 +154,7 @@ export default function About() {
   });
 
   return (
-    // Gutiere pe SECTIUNE, cum ai cerut (mx), + protecție de overflow X
+    // gutiere pe secțiune cu mx (nu px)
     <section className="py-20 mx-3 md:mx-6 overflow-x-hidden">
       <div
         ref={revealRef}
@@ -237,22 +164,19 @@ export default function About() {
           inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
         ].join(" ")}
       >
-        {/* wrapper relativ – pentru HintSwipe sub viewport */}
         <div className="relative">
-          {/* VIEWPORT (fără px; mx e pe secțiune) */}
+          {/* VIEWPORT */}
           <div
             ref={viewportRef}
             className="
               relative overflow-hidden
               h-[58vh] md:h-[64vh] lg:h-[68vh]
               [touch-action:pan-y]
-              cursor-grab active:cursor-grabbing
             "
             aria-roledescription="carousel"
           >
             {/* TRACK */}
             <div
-              ref={trackRef}
               className="absolute inset-0 flex will-change-transform"
               style={{
                 gap: `${GAP_PX}px`,
@@ -260,6 +184,8 @@ export default function About() {
                 transform: `translate3d(${translateX}px,0,0)`,
                 transition: animate ? "transform 420ms ease" : "none",
               }}
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
             >
               {extended.map((src, i) => (
                 <div
@@ -299,8 +225,6 @@ export default function About() {
 
             {/* Săgeți desktop */}
             <button
-              data-arrow
-              onPointerDown={(e) => e.stopPropagation()}
               onClick={prev}
               aria-label="Anterior"
               className="
@@ -312,8 +236,6 @@ export default function About() {
               &#8249;
             </button>
             <button
-              data-arrow
-              onPointerDown={(e) => e.stopPropagation()}
               onClick={next}
               aria-label="Următor"
               className="
@@ -325,14 +247,16 @@ export default function About() {
               &#8250;
             </button>
 
-            {/* Dots mobil */}
+            {/* Dots mobil (perechi) */}
             <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
               {Array.from({ length: dotsCount }).map((_, i) => {
                 const active = i === activeDot;
                 return (
                   <span
                     key={i}
-                    onClick={() => setIndex(startIndex + i * group)}
+                    onClick={() =>
+                      setIndex(calcStartIndex(visible) + i * group)
+                    }
                     className={`h-1.5 rounded-full transition-all ${
                       active ? "w-6 bg-white" : "w-2 bg-white/60"
                     }`}
@@ -342,7 +266,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* HintSwipe sub slider (vizibil pe mobil) */}
+          {/* HintSwipe sub slider (mobil) */}
           <HintSwipe />
         </div>
       </div>
