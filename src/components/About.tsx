@@ -1,9 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-// FĂRĂ HintTap
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import about1 from "../assets/about1.jpg";
 import about2 from "../assets/about2.jpg";
 import about3 from "../assets/about3.jpg";
 import about4 from "../assets/about4.jpg";
+import about5 from "../assets/about5.jpg";
+import about6 from "../assets/about6.jpg";
+import about7 from "../assets/about7.jpg";
+import about8 from "../assets/about8.jpg";
 import HintSwipe from "./HintSwipe";
 
 type Item = { img: string };
@@ -13,17 +16,29 @@ const ITEMS: Item[] = [
   { img: about2 },
   { img: about3 },
   { img: about4 },
+  { img: about5 },
+  { img: about6 },
+  { img: about7 },
+  { img: about8 },
 ];
 
-/* Hook mic pentru apariție la scroll */
-function useInView<T extends HTMLElement>(opts?: IntersectionObserverInit) {
+const GAP_PX = 12;
+const REPEAT = 40;
+
+/* === Hook reveal-on-scroll (ca înainte) === */
+function useInView<T extends HTMLElement>(
+  opts: IntersectionObserverInit = {
+    threshold: 0.15,
+    rootMargin: "0px 0px -5% 0px",
+  }
+) {
   const ref = useRef<T | null>(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
     if (!ref.current) return;
     const io = new IntersectionObserver(
       ([e]) => setInView(!!e.isIntersecting),
-      { threshold: 0.15, rootMargin: "0px 0px -5% 0px", ...opts }
+      opts
     );
     io.observe(ref.current);
     return () => io.disconnect();
@@ -31,153 +46,247 @@ function useInView<T extends HTMLElement>(opts?: IntersectionObserverInit) {
   return { ref, inView };
 }
 
-function AboutTile({ img }: Item) {
-  const { ref, inView } = useInView<HTMLDivElement>();
+export default function About() {
+  // 2 pe mobil, 4 pe desktop (ca layoutul inițial)
+  const [visible, setVisible] = useState(4);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const apply = () => setVisible(mq.matches ? 2 : 4);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
-  return (
-    <div
-      ref={ref}
-      className={[
-        "group relative overflow-hidden",
-        "h-[58vh] md:h:[64vh] lg:h-[68vh]",
-        "rounded-none md:rounded-3xl ring-1 ring-white/10",
-        "shadow-[0_25px_120px_rgba(0,0,0,0.75)]",
-        "transition-all duration-700 ease-out",
-        inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
-        // doar cursor normal; nu mai e clickable
-        "select-none",
-      ].join(" ")}
-    >
-      <img
-        src={img}
-        alt=""
-        className={[
-          "absolute inset-0 w-full h-full object-cover",
-          "transition-transform duration-700 ease-out will-change-transform",
-          // zoom fin DOAR pe desktop/tabletă
-          "md:group-hover:scale-[1.04]",
-        ].join(" ")}
-        draggable={false}
-        loading="lazy"
-        decoding="async"
-      />
+  const base = ITEMS.map((i) => i.img);
+  const baseLen = base.length;
 
-      {/* vignetă ușoară permanentă */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
-    </div>
-  );
-}
+  // track extins pentru infinit
+  const extended = useMemo(() => {
+    const arr: string[] = [];
+    for (let i = 0; i < REPEAT; i++) arr.push(...base);
+    return arr;
+  }, [base]);
 
-const About = () => {
-  const scrollerRef = useRef<HTMLDivElement | null>(null);
-  const [page, setPage] = useState(0); // 0 sau 1, avem 2 ecrane
-
-  const scrollToPage = (p: number) => {
-    const el = scrollerRef.current;
+  // viewport + măsurare card width
+  const viewportRef = useRef<HTMLDivElement | null>(null);
+  const [cardW, setCardW] = useState(0);
+  useEffect(() => {
+    const el = viewportRef.current;
     if (!el) return;
-    const pad = 24; // px — același ca în px-3 (12+12)
-    const x = p * (window.innerWidth - pad);
-    el.scrollTo({ left: x, behavior: "smooth" });
-    setPage(p);
-  };
+    const calc = () => {
+      const w = el.clientWidth; // include padding (px-3 md:px-6)
+      const visibleGaps = (visible - 1) * GAP_PX;
+      setCardW(Math.max(0, (w - visibleGaps) / visible));
+    };
+    calc();
+    const ro = new ResizeObserver(calc);
+    ro.observe(el);
+    window.addEventListener("resize", calc);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", calc);
+    };
+  }, [visible]);
 
-  const handleScroll = () => {
-    const el = scrollerRef.current;
+  // start la mijlocul track-ului
+  const startIndex = useMemo(() => Math.floor(REPEAT / 2) * baseLen, [baseLen]);
+  const [index, setIndex] = useState(startIndex);
+  const [animate, setAnimate] = useState(true);
+
+  // repoziționare când se schimbă layout-ul
+  useEffect(() => {
+    setAnimate(false);
+    setIndex(startIndex);
+    requestAnimationFrame(() => setAnimate(true));
+  }, [startIndex]);
+
+  const next = () => setIndex((i) => Math.round(i) + 1);
+  const prev = () => setIndex((i) => Math.round(i) - 1);
+
+  // drag (mouse + touch via Pointer Events)
+  const drag = useRef({ active: false, startX: 0, startIndex: 0 });
+  useEffect(() => {
+    const el = viewportRef.current;
     if (!el) return;
-    const pad = 24;
-    const w = window.innerWidth - pad;
-    const p = Math.round(el.scrollLeft / w);
-    if (p !== page) setPage(Math.max(0, Math.min(1, p)));
-  };
+
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-arrow]")) return; // nu furăm evenimentul săgeților
+      drag.current.active = true;
+      drag.current.startX = e.clientX;
+      drag.current.startIndex = index;
+      setAnimate(false);
+      el.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!drag.current.active) return;
+      const dx = e.clientX - drag.current.startX;
+      const step = cardW + GAP_PX;
+      setIndex(drag.current.startIndex - dx / step);
+    };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!drag.current.active) return;
+      el.releasePointerCapture(e.pointerId);
+      drag.current.active = false;
+      setIndex(Math.round(index)); // snap pe cel mai apropiat
+      setAnimate(true);
+    };
+
+    el.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    return () => {
+      el.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [index, cardW]);
+
+  // infinit: recentrare invizibilă
+  useEffect(() => {
+    const low = baseLen * 2;
+    const high = baseLen * (REPEAT - 3);
+    if (index < low || index > high) {
+      const delta = index - startIndex;
+      const normalized = startIndex + (((delta % baseLen) + baseLen) % baseLen);
+      setAnimate(false);
+      setIndex(normalized);
+      requestAnimationFrame(() => setAnimate(true));
+    }
+  }, [index, baseLen, startIndex]);
+
+  // transform & track
+  const step = cardW + GAP_PX;
+  const translateX = -(index * step);
+  const trackW = extended.length * step - GAP_PX;
+
+  // dots pe mobil (grupate câte 2)
+  const logicalLeft = ((Math.round(index) % baseLen) + baseLen) % baseLen;
+  const group = Math.max(1, Math.min(visible, 2));
+  const dotsCount = Math.ceil(baseLen / group);
+  const activeDot = Math.floor(logicalLeft / group) % dotsCount;
+
+  // reveal-on-scroll pe întreg sliderul (ca înainte)
+  const { ref: revealRef, inView } = useInView<HTMLDivElement>({
+    threshold: 0.18,
+    rootMargin: "0px 0px -12% 0px",
+  });
 
   return (
     <section className="py-20">
-      {/* ===== Mobile: 2 ecrane, fiecare cu 2 tile-uri ===== */}
-      <div className="md:hidden w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] relative">
-        {/* BUTOANELE */}
-        <button
-          aria-label="Anterior"
-          onClick={() => scrollToPage(0)}
-          disabled={page === 0}
-          className="absolute z-20 left-3 top-1/2 -translate-y-1/2
-               w-9 h-9 grid place-items-center rounded-full
-               bg-black/45 ring-1 ring-white/20 backdrop-blur
-               disabled:opacity-30 disabled:cursor-default"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M15 6l-6 6 6 6"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        <button
-          aria-label="Următor"
-          onClick={() => scrollToPage(1)}
-          disabled={page === 1}
-          className="absolute z-20 right-3 top-1/2 -translate-y-1/2
-               w-9 h-9 grid place-items-center rounded-full
-               bg-black/45 ring-1 ring-white/20 backdrop-blur
-               disabled:opacity-30 disabled:cursor-default"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M9 6l6 6-6 6"
-              stroke="white"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </button>
-
-        {/* SCROLLER-UL */}
-        <div
-          ref={scrollerRef}
-          onScroll={handleScroll}
-          className="
-              flex overflow-x-auto overflow-y-hidden snap-x snap-mandatory scroll-smooth
-              gap-3 px-3
-              touch-pan-x [overscroll-behavior-x:contain]
-              [-ms-overflow-style:none] [scrollbar-width:none]
-              [scroll-padding-left:12px] [scroll-padding-right:12px]
+      <div
+        ref={revealRef}
+        className={[
+          "relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] select-none",
+          "transition-all duration-700 ease-out",
+          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
+        ].join(" ")}
+      >
+        {/* wrapper relativ pentru HintSwipe sub viewport */}
+        <div className="relative">
+          {/* VIEWPORT: padding intern pentru margini vizibile */}
+          <div
+            ref={viewportRef}
+            className="
+              relative overflow-hidden
+              h-[58vh] md:h-[64vh] lg:h-[68vh]
+              mx-3 md:mx-6
+              [touch-action:pan-y]
+              cursor-grab active:cursor-grabbing
             "
-          style={{ WebkitOverflowScrolling: "touch" }}
-        >
-          {/* Ecran 1 */}
-          <div className="shrink-0 snap-center [scroll-snap-stop:always] w-[calc(100vw-24px)] grid grid-cols-2 gap-3">
-            <AboutTile img={ITEMS[0].img} />
-            <AboutTile img={ITEMS[1].img} />
-          </div>
-          {/* Ecran 2 */}
-          <div className="shrink-0 snap-center [scroll-snap-stop:always] w-[calc(100vw-24px)] grid grid-cols-2 gap-3">
-            <AboutTile img={ITEMS[2].img} />
-            <AboutTile img={ITEMS[3].img} />
-          </div>
-        </div>
+            aria-roledescription="carousel"
+          >
+            {/* TRACK */}
+            <div
+              className="absolute inset-0 flex"
+              style={{
+                gap: `${GAP_PX}px`,
+                width: `${trackW}px`,
+                transform: `translateX(${translateX}px)`,
+                transition: animate ? "transform 420ms ease" : "none",
+              }}
+            >
+              {extended.map((src, i) => (
+                <div
+                  key={`${src}-${i}`}
+                  className="relative shrink-0 h-full"
+                  style={{ width: `${cardW}px` }}
+                >
+                  <div
+                    className="
+                      group relative overflow-hidden
+                      h-full
+                      rounded-none md:rounded-3xl ring-1 ring-white/10
+                      shadow-[0_25px_120px_rgba(0,0,0,0.75)]
+                    "
+                  >
+                    <img
+                      src={src}
+                      alt={`slide ${(i % baseLen) + 1}`}
+                      className="
+                        absolute inset-0 w-full h-full object-cover
+                        transition-transform duration-700 ease-out will-change-transform
+                        md:group-hover:scale-[1.04]
+                      "
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                    />
+                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
+                  </div>
+                </div>
+              ))}
+            </div>
 
-        {/* Dacă nu mai vrei și HintSwipe, poți șterge următoarea linie */}
-        <HintSwipe />
-      </div>
+            {/* SĂGEȚI desktop */}
+            <button
+              data-arrow
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={prev}
+              aria-label="Anterior"
+              className="
+                hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20
+                h-9 w-9 items-center justify-center rounded-full
+                ring-1 ring-white/70 text-white/90 backdrop-blur bg-black/30 hover:bg-black/40
+              "
+            >
+              &#8249;
+            </button>
+            <button
+              data-arrow
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={next}
+              aria-label="Următor"
+              className="
+                hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20
+                h-9 w-9 items-center justify-center rounded-full
+                ring-1 ring-white/70 text-white/90 backdrop-blur bg-black/30 hover:bg-black/40
+              "
+            >
+              &#8250;
+            </button>
 
-      {/* ===== Desktop/tabletă: 4 coloane pe o singură linie ===== */}
-      <div className="hidden md:block overflow-hidden">
-        <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw]">
-          <div className="grid grid-cols-4 w-screen gap-3 px-4">
-            {ITEMS.map((it, i) => (
-              <div key={i} className="col-span-1">
-                <AboutTile img={it.img} />
-              </div>
-            ))}
+            {/* DOTS pe mobil (perechi) */}
+            <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
+              {Array.from({ length: dotsCount }).map((_, i) => {
+                const active = i === activeDot;
+                return (
+                  <span
+                    key={i}
+                    onClick={() => setIndex(startIndex + i * group)}
+                    className={`h-1.5 rounded-full transition-all ${
+                      active ? "w-6 bg-white" : "w-2 bg-white/60"
+                    }`}
+                  />
+                );
+              })}
+            </div>
           </div>
+
+          {/* HintSwipe sub slider (vizibil pe mobil) */}
+          <HintSwipe />
         </div>
       </div>
     </section>
   );
-};
-
-export default About;
+}
