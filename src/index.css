@@ -47,6 +47,11 @@ html {
     box-shadow: 0 0 0 6px rgb(255 255 255 / 0.08);
   }
 
+  .backface-hidden {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+  }
+
   .dot-right::before {
     content: "";
     position: absolute;

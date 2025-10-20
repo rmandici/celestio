@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import about1 from "../assets/about1.jpg";
 import about2 from "../assets/about2.jpg";
 import about3 from "../assets/about3.jpg";
@@ -47,9 +47,8 @@ function useInView<T extends HTMLElement>(
 }
 
 export default function About() {
-  // 2 pe mobil, 4 pe desktop (layout inițial)
+  // 2 pe mobil, 4 pe desktop (layout vizibil)
   const [visible, setVisible] = useState(4);
-  const GROUP = visible === 2 ? 2 : 1;
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     const apply = () => setVisible(mq.matches ? 2 : 4);
@@ -57,6 +56,9 @@ export default function About() {
     mq.addEventListener("change", apply);
     return () => mq.removeEventListener("change", apply);
   }, []);
+
+  // GROUP dinamic: 2 pe mobil, 1 pe desktop
+  const group = visible === 2 ? 2 : 1;
 
   const base = ITEMS.map((i) => i.img);
   const baseLen = base.length;
@@ -68,7 +70,7 @@ export default function About() {
     return arr;
   }, [base]);
 
-  // viewport + măsurare card width (folosim lățimea viewport-ului)
+  // viewport + măsurare card width (rotunjit la DPR ca să evităm fante)
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [cardW, setCardW] = useState(0);
   useEffect(() => {
@@ -77,7 +79,10 @@ export default function About() {
     const calc = () => {
       const w = el.clientWidth;
       const visibleGaps = (visible - 1) * GAP_PX;
-      setCardW(Math.max(0, (w - visibleGaps) / visible));
+      const dpr = window.devicePixelRatio || 1;
+      const raw = (w - visibleGaps) / visible;
+      const rounded = Math.round(raw * dpr) / dpr; // ⟵ rotunjire la DPR
+      setCardW(Math.max(0, rounded));
     };
     calc();
     const ro = new ResizeObserver(calc);
@@ -105,11 +110,11 @@ export default function About() {
     requestAnimationFrame(() => setAnimate(true));
   }, [visible, baseLen]);
 
-  // controale (pas de GROUP=2 carduri)
-  const next = () => setIndex((i) => Math.round(i) + GROUP);
-  const prev = () => setIndex((i) => Math.round(i) - GROUP);
+  // controale (pas de "group": 2 pe mobil, 1 pe desktop)
+  const next = () => setIndex((i) => Math.round(i) + group);
+  const prev = () => setIndex((i) => Math.round(i) - group);
 
-  // ===== Swipe pe pagini (Pointer Events) – merge și pe desktop, super fluid =====
+  // Swipe pe pagini (Pointer Events) – mobil & desktop
   const [dragging, setDragging] = useState(false);
   const swipeStartX = useRef<number | null>(null);
   const SWIPE_THRESHOLD = 40; // px
@@ -134,7 +139,7 @@ export default function About() {
     setDragging(false);
   };
 
-  // infinit: recentrare invizibilă (rară, fără salt perceptibil)
+  // infinit: recentrare invizibilă (rară, fără salt)
   useEffect(() => {
     const low = baseLen * 2;
     const high = baseLen * (REPEAT - 3);
@@ -148,15 +153,17 @@ export default function About() {
     }
   }, [index, baseLen, visible]);
 
-  // transform & track
+  // transform & track — rotunjit la DPR ca să nu apară “fante”
   const step = cardW + GAP_PX;
-  const translateX = -(index * step);
+  const dpr =
+    (typeof window !== "undefined" ? window.devicePixelRatio : 1) || 1;
+  const translateX = Math.round(-(index * step) * dpr) / dpr;
   const trackW = extended.length * step - GAP_PX;
 
-  // dots pe mobil (perechi de 2)
+  // dots pe mobil (grupate pe `group`)
   const logicalLeft = ((index % baseLen) + baseLen) % baseLen;
-  const dotsCount = Math.ceil(baseLen / GROUP);
-  const activeDot = Math.floor(logicalLeft / GROUP) % dotsCount;
+  const dotsCount = Math.ceil(baseLen / group);
+  const activeDot = Math.floor(logicalLeft / group) % dotsCount;
 
   // reveal-on-scroll
   const { ref: revealRef, inView } = useInView<HTMLDivElement>({
@@ -199,43 +206,48 @@ export default function About() {
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
             >
-              {extended.map((src, i) => (
-                <div
-                  key={`${src}-${i}`}
-                  className="
-                    relative shrink-0 h-full
-                    [content-visibility:auto]
-                    [contain:layout_paint]
-                  "
-                  style={{ width: `${cardW}px` }}
-                >
+              {extended.map((src, i) => {
+                // preîncărcăm vecinii apropiați pentru a evita blink-ul
+                const near = Math.abs(i - Math.round(index)) <= 3;
+                return (
                   <div
+                    key={`${src}-${i}`}
                     className="
-                      group relative overflow-hidden h-full
-                      rounded-none md:rounded-3xl ring-1 ring-white/10
-                      shadow-[0_25px_120px_rgba(0,0,0,0.75)]
+                      relative shrink-0 h-full
                     "
+                    style={{ width: `${cardW}px` }}
                   >
-                    <img
-                      src={src}
-                      alt={`slide ${(i % baseLen) + 1}`}
+                    <div
                       className="
-                        absolute inset-0 w-full h-full object-cover
-                        transition-transform duration-700 ease-out
-                        md:will-change-transform
-                        md:group-hover:scale-[1.04]
+                        group relative overflow-hidden h-full
+                        rounded-none md:rounded-3xl ring-1 ring-white/10
+                        shadow-[0_25px_120px_rgba(0,0,0,0.75)]
                       "
-                      loading="lazy"
-                      decoding="async"
-                      draggable={false}
-                    />
-                    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
+                    >
+                      <img
+                        src={src}
+                        alt={`slide ${(i % baseLen) + 1}`}
+                        className="
+                          absolute inset-0 w-full h-full object-cover
+                          transition-transform duration-700 ease-out
+                          md:will-change-transform
+                          md:group-hover:scale-[1.04]
+                          [backface-visibility:hidden] [transform:translateZ(0)]
+                        "
+                        loading={near ? "eager" : "lazy"}
+                        // bypass TS până când tipurile React prind fetchpriority
+                        {...({ fetchpriority: near ? "high" : "auto" } as any)}
+                        decoding="async"
+                        draggable={false}
+                      />
+                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* Săgeți desktop */}
+            {/* Săgeți desktop (sar cu `group`: 1 desktop / 2 mobil) */}
             <button
               data-arrow
               onClick={prev}
@@ -261,7 +273,7 @@ export default function About() {
               &#8250;
             </button>
 
-            {/* Dots mobil (grupate câte 2) */}
+            {/* Dots mobil (aliniate la `group`) */}
             <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
               {Array.from({ length: dotsCount }).map((_, i) => {
                 const active = i === activeDot;
@@ -269,7 +281,7 @@ export default function About() {
                   <span
                     key={i}
                     onClick={() =>
-                      setIndex(calcStartIndex(visible) + i * GROUP)
+                      setIndex(calcStartIndex(visible) + i * group)
                     }
                     className={`h-1.5 rounded-full transition-all ${
                       active ? "w-6 bg-white" : "w-2 bg-white/60"
