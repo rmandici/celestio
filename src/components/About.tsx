@@ -56,7 +56,7 @@ export default function About() {
   // layout: 2 pe mobil, 4 pe desktop
   const [visible, setVisible] = useState(4);
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
+    const mq = window.matchMedia("(max-width: 1024px)");
     const apply = () => setVisible(mq.matches ? 2 : 4);
     apply();
     mq.addEventListener("change", apply);
@@ -179,9 +179,9 @@ export default function About() {
       <div
         ref={revealRef}
         className={[
-          "relative select-none",
-          "transition-all duration-700 ease-out",
-          inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6",
+          "relative", // <-- fără overflow aici
+          "transition-opacity duration-700", // doar fade
+          inView ? "opacity-100" : "opacity-0",
         ].join(" ")}
       >
         <div className="relative">
@@ -193,13 +193,17 @@ export default function About() {
               "h-[58vh] md:h-[64vh] lg:h-[68vh]",
               "[touch-action:pan-y] select-none",
               dragging ? "cursor-grabbing" : "cursor-grab",
+              // stabilizare GPU + eliminare artefacte
+              "[backface-visibility:hidden] [transform:translateZ(0)] will-change-transform",
+              "[padding-bottom:1px]", // mic hack anti-fantă la bază
             ].join(" ")}
             aria-roledescription="carousel"
           >
             {/* TRACK LUNG (fluid) */}
             <div
-              className="absolute inset-0 will-change-transform"
+              className="absolute inset-0 flex will-change-transform [backface-visibility:hidden] [transform:translateZ(0)]"
               style={{
+                gap: `${GAP_PX}px`,
                 width: `${trackW}px`,
                 transform: `translate3d(${translateX}px,0,0)`,
                 transition: animate ? "transform 420ms ease" : "none",
@@ -258,7 +262,7 @@ export default function About() {
               onClick={prev}
               aria-label="Anterior"
               className="
-                hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20
+                hidden lg:flex absolute left-4 top-1/2 -translate-y-1/2 z-20
                 h-9 w-9 items-center justify-center rounded-full
                 ring-1 ring-white/70 text-white/90 backdrop-blur bg-black/30 hover:bg-black/40
               "
@@ -270,7 +274,7 @@ export default function About() {
               onClick={next}
               aria-label="Următor"
               className="
-                hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20
+                hidden lg:flex absolute right-4 top-1/2 -translate-y-1/2 z-20
                 h-9 w-9 items-center justify-center rounded-full
                 ring-1 ring-white/70 text-white/90 backdrop-blur bg-black/30 hover:bg-black/40
               "
@@ -279,7 +283,7 @@ export default function About() {
             </button>
 
             {/* Dots mobil (aliniate la group) */}
-            <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
+            <div className="lg:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
               {Array.from({ length: dotsCount }).map((_, i) => {
                 const active = i === activeDot;
                 return (
