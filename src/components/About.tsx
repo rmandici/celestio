@@ -23,9 +23,13 @@ const ITEMS: Item[] = [
 ];
 
 const GAP_PX = 12;
-const REPEAT = 16;
 
-/* Reveal on scroll – ca înainte */
+// câte cicluri ale listei bază compun pista (mare = fluid, dar fără crash)
+const EXTENDED_CYCLES = 40; // ca la Souperior (gen 40–50)
+const WINDOW_LEFT = 6; // câte carduri randăm în stânga indexului
+const WINDOW_RIGHT = 6; // câte carduri randăm în dreapta + cele vizibile
+
+/* Reveal on scroll */
 function useInView<T extends HTMLElement>(
   opts: IntersectionObserverInit = {
     threshold: 0.15,
@@ -46,8 +50,10 @@ function useInView<T extends HTMLElement>(
   return { ref, inView };
 }
 
+const mod = (n: number, m: number) => ((n % m) + m) % m;
+
 export default function About() {
-  // 2 pe mobil, 4 pe desktop (layout vizibil)
+  // layout: 2 pe mobil, 4 pe desktop
   const [visible, setVisible] = useState(4);
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -60,15 +66,12 @@ export default function About() {
   // GROUP dinamic: 2 pe mobil, 1 pe desktop
   const group = visible === 2 ? 2 : 1;
 
-  const base = ITEMS.map((i) => i.img);
+  const base = useMemo(() => ITEMS.map((i) => i.img), []);
   const baseLen = base.length;
+  const extendedLen = baseLen * EXTENDED_CYCLES;
 
-  // track extins pentru “infinit”
-  const extended = useMemo(() => {
-    const arr: string[] = [];
-    for (let i = 0; i < REPEAT; i++) arr.push(...base);
-    return arr;
-  }, [base]);
+  // „ancorăm” indexul în mijlocul pistei ca să avem loc în ambele sensuri
+  const anchor = Math.floor(EXTENDED_CYCLES / 2) * baseLen;
 
   // viewport + măsurare card width (rotunjit la DPR ca să evităm fante)
   const viewportRef = useRef<HTMLDivElement | null>(null);
@@ -81,7 +84,7 @@ export default function About() {
       const visibleGaps = (visible - 1) * GAP_PX;
       const dpr = window.devicePixelRatio || 1;
       const raw = (w - visibleGaps) / visible;
-      const rounded = Math.round(raw * dpr) / dpr; // ⟵ rotunjire la DPR
+      const rounded = Math.round(raw * dpr) / dpr;
       setCardW(Math.max(0, rounded));
     };
     calc();
@@ -94,34 +97,29 @@ export default function About() {
     };
   }, [visible]);
 
-  // index = slide-ul din stânga ferestrei
-  const calcStartIndex = (vis: number) => {
-    const mid = Math.floor(REPEAT / 2) * baseLen;
-    return mid;
-  };
-
-  const [index, setIndex] = useState(() => calcStartIndex(visible));
+  // index = slide-ul din stânga ferestrei, în coordonate „pistă extinsă”
+  const [index, setIndex] = useState(anchor);
   const [animate, setAnimate] = useState(true);
 
-  // realiniere când se schimbă nr. vizibile
+  // realiniere când se schimbă layout-ul
   useEffect(() => {
     setAnimate(false);
-    setIndex(calcStartIndex(visible));
+    setIndex(anchor);
     requestAnimationFrame(() => setAnimate(true));
-  }, [visible, baseLen]);
+  }, [anchor, visible]);
 
-  // controale (pas de "group": 2 pe mobil, 1 pe desktop)
+  // controale (pas de `group`)
   const next = () => setIndex((i) => Math.round(i) + group);
   const prev = () => setIndex((i) => Math.round(i) - group);
 
   // Swipe pe pagini (Pointer Events) – mobil & desktop
   const [dragging, setDragging] = useState(false);
   const swipeStartX = useRef<number | null>(null);
-  const SWIPE_THRESHOLD = 40; // px
+  const SWIPE_THRESHOLD = 40;
 
   const onPointerDown = (e: React.PointerEvent) => {
     const t = e.target as HTMLElement;
-    if (t.closest("[data-arrow]")) return; // nu capturăm pe săgeți
+    if (t.closest("[data-arrow]")) return;
     swipeStartX.current = e.clientX;
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     setDragging(true);
@@ -139,29 +137,34 @@ export default function About() {
     setDragging(false);
   };
 
-  // infinit: recentrare invizibilă (rară, fără salt)
+  // recentrare INVIZIBILĂ doar când ne apropiem de capete, dar păstrăm
+  // aceeași poziție logică (față de anchor)
   useEffect(() => {
     const low = baseLen * 2;
-    const high = baseLen * (REPEAT - 3);
+    const high = extendedLen - baseLen * 3;
     if (index < low || index > high) {
-      const delta = index - calcStartIndex(visible);
-      const normalized =
-        calcStartIndex(visible) + (((delta % baseLen) + baseLen) % baseLen);
+      const delta = index - anchor;
+      const normalized = anchor + mod(delta, baseLen);
       setAnimate(false);
       setIndex(normalized);
       requestAnimationFrame(() => setAnimate(true));
     }
-  }, [index, baseLen, visible]);
+  }, [index, baseLen, extendedLen, anchor]);
 
-  // transform & track — rotunjit la DPR ca să nu apară “fante”
+  // geometrie pistă (MARE ca la Souperior) + rotunjire la DPR
   const step = cardW + GAP_PX;
   const dpr =
     (typeof window !== "undefined" ? window.devicePixelRatio : 1) || 1;
   const translateX = Math.round(-(index * step) * dpr) / dpr;
-  const trackW = extended.length * step - GAP_PX;
+  const trackW = Math.max(0, extendedLen * step - GAP_PX);
 
-  // dots pe mobil (grupate pe `group`)
-  const logicalLeft = ((index % baseLen) + baseLen) % baseLen;
+  // VIRTUALIZARE: randăm doar ferestra în jurul indexului ancorat pe pistă lungă
+  const leftIdx = Math.floor(index) - WINDOW_LEFT;
+  const rightIdx = Math.floor(index) + visible + WINDOW_RIGHT;
+  const count = Math.max(0, rightIdx - leftIdx);
+
+  // dots mobil (aliniate la `group`)
+  const logicalLeft = mod(index - anchor, baseLen); // 0..baseLen-1
   const dotsCount = Math.ceil(baseLen / group);
   const activeDot = Math.floor(logicalLeft / group) % dotsCount;
 
@@ -172,7 +175,6 @@ export default function About() {
   });
 
   return (
-    // gutter pe secțiune cu mx, + protecție overflow X
     <section className="py-20 mx-3 md:mx-6 overflow-x-hidden">
       <div
         ref={revealRef}
@@ -194,11 +196,10 @@ export default function About() {
             ].join(" ")}
             aria-roledescription="carousel"
           >
-            {/* TRACK */}
+            {/* TRACK LUNG (fluid) */}
             <div
-              className="absolute inset-0 flex will-change-transform"
+              className="absolute inset-0 will-change-transform"
               style={{
-                gap: `${GAP_PX}px`,
                 width: `${trackW}px`,
                 transform: `translate3d(${translateX}px,0,0)`,
                 transition: animate ? "transform 420ms ease" : "none",
@@ -206,48 +207,52 @@ export default function About() {
               onPointerDown={onPointerDown}
               onPointerUp={onPointerUp}
             >
-              {extended.map((src, i) => {
-                // preîncărcăm vecinii apropiați pentru a evita blink-ul
-                const near = Math.abs(i - Math.round(index)) <= 3;
-                return (
-                  <div
-                    key={`${src}-${i}`}
-                    className="
-                      relative shrink-0 h-full
-                    "
-                    style={{ width: `${cardW}px` }}
-                  >
+              <div className="relative h-full">
+                {Array.from({ length: count }).map((_, k) => {
+                  const g = leftIdx + k; // index global pe pistă
+                  const src = base[mod(g, baseLen)];
+                  const left = Math.round(g * step * dpr) / dpr; // poziție rotunjită
+                  const near = Math.abs(g - Math.round(index)) <= 3;
+
+                  return (
                     <div
-                      className="
-                        group relative overflow-hidden h-full
-                        rounded-none md:rounded-3xl ring-1 ring-white/10
-                        shadow-[0_25px_120px_rgba(0,0,0,0.75)]
-                      "
+                      key={`${src}-${g}`}
+                      className="absolute top-0 h-full"
+                      style={{ left: `${left}px`, width: `${cardW}px` }}
                     >
-                      <img
-                        src={src}
-                        alt={`slide ${(i % baseLen) + 1}`}
+                      <div
                         className="
-                          absolute inset-0 w-full h-full object-cover
-                          transition-transform duration-700 ease-out
-                          md:will-change-transform
-                          md:group-hover:scale-[1.04]
-                          [backface-visibility:hidden] [transform:translateZ(0)]
+                          group relative overflow-hidden h-full
+                          rounded-none md:rounded-3xl ring-1 ring-white/10
+                          shadow-[0_25px_120px_rgba(0,0,0,0.75)]
                         "
-                        loading={near ? "eager" : "lazy"}
-                        // bypass TS până când tipurile React prind fetchpriority
-                        {...({ fetchpriority: near ? "high" : "auto" } as any)}
-                        decoding="async"
-                        draggable={false}
-                      />
-                      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
+                      >
+                        <img
+                          src={src}
+                          alt=""
+                          className="
+                            absolute inset-0 w-full h-full object-cover
+                            transition-transform duration-700 ease-out
+                            md:will-change-transform
+                            md:group-hover:scale-[1.04]
+                            [backface-visibility:hidden] [transform:translateZ(0)]
+                          "
+                          loading={near ? "eager" : "lazy"}
+                          {...({
+                            fetchpriority: near ? "high" : "auto",
+                          } as any)}
+                          decoding="async"
+                          draggable={false}
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_50%,rgba(0,0,0,0)_40%,rgba(0,0,0,0.55)_100%)]" />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Săgeți desktop (sar cu `group`: 1 desktop / 2 mobil) */}
+            {/* Săgeți desktop (pas = group: 1 desktop / 2 mobil) */}
             <button
               data-arrow
               onClick={prev}
@@ -273,16 +278,14 @@ export default function About() {
               &#8250;
             </button>
 
-            {/* Dots mobil (aliniate la `group`) */}
+            {/* Dots mobil (aliniate la group) */}
             <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
               {Array.from({ length: dotsCount }).map((_, i) => {
                 const active = i === activeDot;
                 return (
                   <span
                     key={i}
-                    onClick={() =>
-                      setIndex(calcStartIndex(visible) + i * group)
-                    }
+                    onClick={() => setIndex(anchor + i * group)}
                     className={`h-1.5 rounded-full transition-all ${
                       active ? "w-6 bg-white" : "w-2 bg-white/60"
                     }`}
