@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import about1 from "../assets/about1.jpg";
 import about2 from "../assets/about2.jpg";
 import about3 from "../assets/about3.jpg";
@@ -23,7 +23,7 @@ const ITEMS: Item[] = [
 ];
 
 const GAP_PX = 12;
-const REPEAT = 16; // suficient pt. infinit fără a încărca excesiv mobilul
+const REPEAT = 16;
 
 /* Reveal on scroll – ca înainte */
 function useInView<T extends HTMLElement>(
@@ -49,6 +49,7 @@ function useInView<T extends HTMLElement>(
 export default function About() {
   // 2 pe mobil, 4 pe desktop (layout inițial)
   const [visible, setVisible] = useState(4);
+  const GROUP = visible === 2 ? 2 : 1;
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     const apply = () => setVisible(mq.matches ? 2 : 4);
@@ -67,7 +68,7 @@ export default function About() {
     return arr;
   }, [base]);
 
-  // viewport + măsurare card width
+  // viewport + măsurare card width (folosim lățimea viewport-ului)
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [cardW, setCardW] = useState(0);
   useEffect(() => {
@@ -91,38 +92,49 @@ export default function About() {
   // index = slide-ul din stânga ferestrei
   const calcStartIndex = (vis: number) => {
     const mid = Math.floor(REPEAT / 2) * baseLen;
-    return mid; // pentru 2/4 vizibile nu offsetăm
+    return mid;
   };
 
   const [index, setIndex] = useState(() => calcStartIndex(visible));
   const [animate, setAnimate] = useState(true);
 
-  // re-aliniere când se schimbă nr. vizibile
+  // realiniere când se schimbă nr. vizibile
   useEffect(() => {
     setAnimate(false);
     setIndex(calcStartIndex(visible));
     requestAnimationFrame(() => setAnimate(true));
   }, [visible, baseLen]);
 
-  // controale
-  const next = () => setIndex((i) => Math.round(i) + 1);
-  const prev = () => setIndex((i) => Math.round(i) - 1);
+  // controale (pas de GROUP=2 carduri)
+  const next = () => setIndex((i) => Math.round(i) + GROUP);
+  const prev = () => setIndex((i) => Math.round(i) - GROUP);
 
-  // swipe pe mobil (ca Souperior: doar la end decidem pagina)
-  const touchStartX = useRef<number | null>(null);
-  const onTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+  // ===== Swipe pe pagini (Pointer Events) – merge și pe desktop, super fluid =====
+  const [dragging, setDragging] = useState(false);
+  const swipeStartX = useRef<number | null>(null);
+  const SWIPE_THRESHOLD = 40; // px
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    const t = e.target as HTMLElement;
+    if (t.closest("[data-arrow]")) return; // nu capturăm pe săgeți
+    swipeStartX.current = e.clientX;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    setDragging(true);
   };
-  const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current == null) return;
-    const delta = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(delta) > 40) {
-      delta < 0 ? next() : prev();
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    if (swipeStartX.current != null) {
+      const delta = e.clientX - swipeStartX.current;
+      if (Math.abs(delta) > SWIPE_THRESHOLD) {
+        delta < 0 ? next() : prev();
+      }
+      swipeStartX.current = null;
     }
-    touchStartX.current = null;
+    (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+    setDragging(false);
   };
 
-  // infinit: recentrare INVIZIBILĂ, fără salt vizual
+  // infinit: recentrare invizibilă (rară, fără salt perceptibil)
   useEffect(() => {
     const low = baseLen * 2;
     const high = baseLen * (REPEAT - 3);
@@ -143,9 +155,8 @@ export default function About() {
 
   // dots pe mobil (perechi de 2)
   const logicalLeft = ((index % baseLen) + baseLen) % baseLen;
-  const group = Math.max(1, Math.min(visible, 2));
-  const dotsCount = Math.ceil(baseLen / group);
-  const activeDot = Math.floor(logicalLeft / group) % dotsCount;
+  const dotsCount = Math.ceil(baseLen / GROUP);
+  const activeDot = Math.floor(logicalLeft / GROUP) % dotsCount;
 
   // reveal-on-scroll
   const { ref: revealRef, inView } = useInView<HTMLDivElement>({
@@ -154,7 +165,7 @@ export default function About() {
   });
 
   return (
-    // gutiere pe secțiune cu mx (nu px)
+    // gutter pe secțiune cu mx, + protecție overflow X
     <section className="py-20 mx-3 md:mx-6 overflow-x-hidden">
       <div
         ref={revealRef}
@@ -168,11 +179,12 @@ export default function About() {
           {/* VIEWPORT */}
           <div
             ref={viewportRef}
-            className="
-              relative overflow-hidden
-              h-[58vh] md:h-[64vh] lg:h-[68vh]
-              [touch-action:pan-y]
-            "
+            className={[
+              "relative overflow-hidden",
+              "h-[58vh] md:h-[64vh] lg:h-[68vh]",
+              "[touch-action:pan-y] select-none",
+              dragging ? "cursor-grabbing" : "cursor-grab",
+            ].join(" ")}
             aria-roledescription="carousel"
           >
             {/* TRACK */}
@@ -184,8 +196,8 @@ export default function About() {
                 transform: `translate3d(${translateX}px,0,0)`,
                 transition: animate ? "transform 420ms ease" : "none",
               }}
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
+              onPointerDown={onPointerDown}
+              onPointerUp={onPointerUp}
             >
               {extended.map((src, i) => (
                 <div
@@ -225,6 +237,7 @@ export default function About() {
 
             {/* Săgeți desktop */}
             <button
+              data-arrow
               onClick={prev}
               aria-label="Anterior"
               className="
@@ -236,6 +249,7 @@ export default function About() {
               &#8249;
             </button>
             <button
+              data-arrow
               onClick={next}
               aria-label="Următor"
               className="
@@ -247,7 +261,7 @@ export default function About() {
               &#8250;
             </button>
 
-            {/* Dots mobil (perechi) */}
+            {/* Dots mobil (grupate câte 2) */}
             <div className="md:hidden absolute bottom-3 left-0 right-0 mx-auto flex items-center justify-center gap-2">
               {Array.from({ length: dotsCount }).map((_, i) => {
                 const active = i === activeDot;
@@ -255,7 +269,7 @@ export default function About() {
                   <span
                     key={i}
                     onClick={() =>
-                      setIndex(calcStartIndex(visible) + i * group)
+                      setIndex(calcStartIndex(visible) + i * GROUP)
                     }
                     className={`h-1.5 rounded-full transition-all ${
                       active ? "w-6 bg-white" : "w-2 bg-white/60"
