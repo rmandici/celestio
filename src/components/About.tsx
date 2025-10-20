@@ -23,7 +23,7 @@ const ITEMS: Item[] = [
 ];
 
 const GAP_PX = 12;
-const REPEAT = 40;
+const REPEAT = 8;
 
 /* === Hook reveal-on-scroll (ca înainte) === */
 function useInView<T extends HTMLElement>(
@@ -173,7 +173,7 @@ export default function About() {
   });
 
   return (
-    <section className="py-20">
+    <section className="py-20 overflow-x-hidden">
       <div
         ref={revealRef}
         className={[
@@ -209,7 +209,11 @@ export default function About() {
               {extended.map((src, i) => (
                 <div
                   key={`${src}-${i}`}
-                  className="relative shrink-0 h-full"
+                  className="
+                    relative shrink-0 h-full
+                    [content-visibility:auto]    /* browserul nu mai layout/paintează offscreen */
+                    [contain:layout_paint]       /* limitează aria de layout/paint */
+                  "
                   style={{ width: `${cardW}px` }}
                 >
                   <div
@@ -225,7 +229,8 @@ export default function About() {
                       alt={`slide ${(i % baseLen) + 1}`}
                       className="
                         absolute inset-0 w-full h-full object-cover
-                        transition-transform duration-700 ease-out will-change-transform
+                        transition-transform duration-700 ease-out
+                        md:will-change-transform          /* doar pe md+ */
                         md:group-hover:scale-[1.04]
                       "
                       loading="lazy"
