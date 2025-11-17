@@ -239,7 +239,7 @@ export default function About() {
                             transition-transform duration-700 ease-out
                             md:will-change-transform
                             md:group-hover:scale-[1.04]
-                            [backface-visibility:hidden] [transform:translateZ(0)]
+                            [backface-visibility:hidden] [transform:translateZ(0)] 
                           "
                           loading={near ? "eager" : "lazy"}
                           {...({
