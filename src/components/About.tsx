@@ -228,7 +228,7 @@ export default function About() {
                         className="
                           group relative overflow-hidden h-full
                           rounded-none md:rounded-3xl ring-1 ring-white/10
-                          shadow-[0_25px_120px_rgba(0,0,0,0.75)]
+                          
                         "
                       >
                         <img
