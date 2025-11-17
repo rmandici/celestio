@@ -175,7 +175,7 @@ export default function About() {
   });
 
   return (
-    <section className="py-20 mx-3 md:mx-6 overflow-x-hidden">
+    <section className="py-20 mx-3 md:mx-6 overflow-x-hidden about-slider">
       <div
         ref={revealRef}
         className={[
