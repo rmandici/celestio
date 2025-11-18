@@ -75,7 +75,7 @@ const FAQS: QA[] = [
         <br />
         <br />
         <strong>General Access</strong> - masă standing, fără scaune, consumație
-        minimă de <strong>500 lei</strong>.
+        minimă de <strong>1000 lei</strong>.
         <br /> <strong>VIP</strong> - masă exclusive cu canapele, consumație
         minimă de <strong>3000 lei</strong>.
         <p className="mt-3 text-white/70 italic">
